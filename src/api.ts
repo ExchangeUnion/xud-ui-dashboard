@@ -6,12 +6,11 @@ import { Status } from "./models/Status";
 import { TradehistoryResponse } from "./models/TradehistoryResponse";
 import { TradinglimitsResponse } from "./models/TradinglimitsResponse";
 import { isElectron } from "./common/appUtil";
-import { XUD_DOCKER_LOCAL_MAINNET_URL } from "./constants";
 
 const url =
   process.env.NODE_ENV === "development"
     ? process.env.REACT_APP_API_URL
-    : XUD_DOCKER_LOCAL_MAINNET_URL;
+    : window.location.origin;
 const path = `${url}/api/v1`;
 const xudPath = `${path}/xud`;
 
