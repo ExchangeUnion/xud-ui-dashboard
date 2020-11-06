@@ -8,13 +8,20 @@ import CachedIcon from "@material-ui/icons/Cached";
 import HistoryIcon from "@material-ui/icons/History";
 import RemoveRedEyeOutlinedIcon from "@material-ui/icons/RemoveRedEyeOutlined";
 import React, { ReactElement } from "react";
-import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
+import {
+  Redirect,
+  Route,
+  Switch,
+  useHistory,
+  useRouteMatch,
+} from "react-router-dom";
 import { isElectron } from "../common/appUtil";
 import { Path } from "../router/Path";
 import MenuItem, { MenuItemProps } from "./menu/MenuItem";
 import Overview from "./overview/Overview";
 import Tradehistory from "./tradehistory/Tradehistory";
 import Wallets from "./wallet/Wallets";
+import NotFound from "../common/NotFound";
 
 export const drawerWidth = 200;
 
@@ -119,12 +126,15 @@ const Dashboard = (): ReactElement => {
       <main className={classes.content}>
         <Switch>
           {menuItems.map((item) => (
-            <Route path={`${path}${item.path}`} key={item.text}>
+            <Route exact path={`${path}${item.path}`} key={item.text}>
               {item.component}
             </Route>
           ))}
-          <Route path={path}>
-            <Overview />
+          <Route exact path={path}>
+            <Redirect to={`${path}${Path.OVERVIEW}`} />
+          </Route>
+          <Route>
+            <NotFound />
           </Route>
         </Switch>
       </main>
