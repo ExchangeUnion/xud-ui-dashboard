@@ -68,9 +68,7 @@ function WalletItem(props: WalletItemProps): ReactElement {
   const getLimitsRow = (buy: boolean): ReactElement => {
     const label = `Max ${buy ? "buy" : "sell"}`;
     const hints = [];
-    const reserved = Number(
-      buy ? limits!.reserved_inbound : limits!.reserved_outbound
-    );
+    const reserved = Number(buy ? limits!.reserved_buy : limits!.reserved_sell);
     if (reserved) {
       hints.push(`in orders: ${satsToCoinsStr(reserved)}`);
     }
