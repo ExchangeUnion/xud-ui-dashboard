@@ -11,6 +11,7 @@ import {
 import Dashboard from "./dashboard/Dashboard";
 import { Path } from "./router/Path";
 import ConnectionFailed from "./common/ConnectionFailed";
+import NotFound from "./common/NotFound";
 
 const darkTheme = createMuiTheme({
   palette: {
@@ -54,8 +55,11 @@ function App(): ReactElement {
           <Route path={Path.DASHBOARD}>
             <Dashboard />
           </Route>
-          <Route path={Path.HOME}>
+          <Route exact path={Path.HOME}>
             <Redirect to={Path.DASHBOARD} />
+          </Route>
+          <Route>
+            <NotFound />
           </Route>
         </Switch>
       </Router>
