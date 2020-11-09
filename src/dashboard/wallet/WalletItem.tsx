@@ -110,7 +110,7 @@ function WalletItem(props: WalletItemProps): ReactElement {
                 <strong>Balance</strong>
               </Typography>
               <WalletRow
-                label="Wallet"
+                label="Layer 1"
                 subrows={onChainSubrows}
                 value={satsToCoinsStr(balance.wallet_balance)}
                 labelItem={
@@ -120,7 +120,7 @@ function WalletItem(props: WalletItemProps): ReactElement {
                 }
               />
               <WalletRow
-                label="Channel"
+                label="Layer 2"
                 value={satsToCoinsStr(balance.channel_balance)}
                 subrows={offChainSubrows}
                 labelItem={
