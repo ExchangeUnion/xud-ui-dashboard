@@ -4,7 +4,7 @@
   "author": "Exchange Union",
   "private": true,
   "scripts": {
-    "start": "cross-env NODE_ENV=development react-scripts start",
+    "start": "cross-env NODE_ENV=development HTTPS=true react-scripts start",
     "build": "cross-env NODE_ENV=production react-scripts build",
     "test": "cross-env NODE_ENV=test prettier --check src/ && react-scripts test",
     "eject": "react-scripts eject",
@@ -18,7 +18,6 @@
     "@fortawesome/react-fontawesome": "^0.1.12",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
-    "electron-log": "^4.2.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",

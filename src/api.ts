@@ -1,6 +1,6 @@
 import { from, Observable } from "rxjs";
 import { catchError, mergeMap } from "rxjs/operators";
-import { isElectron } from "./common/appUtil";
+import { isElectron, sendMessageToParent } from "./common/appUtil";
 import { GetbalanceResponse } from "./models/GetbalanceResponse";
 import { Info } from "./models/Info";
 import { SetupStatusResponse } from "./models/SetupStatusResponse";
@@ -17,7 +17,7 @@ const xudPath = `${path}/xud`;
 
 const logError = (url: string, err: string) => {
   if (isElectron()) {
-    (window as any).electron.logError(`requestUrl: ${url}; error: ${err}`);
+    sendMessageToParent(`logError: requestUrl: ${url}; error: ${err}`);
   }
 };
 
