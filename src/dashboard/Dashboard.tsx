@@ -24,6 +24,9 @@ import Wallets from "./wallet/Wallets";
 import NotFound from "../common/NotFound";
 import api from "../api";
 import { SetupStatusResponse } from "../models/SetupStatusResponse";
+import { interval } from "rxjs";
+import { filter, map, mergeMap, takeUntil } from "rxjs/operators";
+import { Status } from "../models/Status";
 
 export const drawerWidth = 200;
 
@@ -85,25 +88,43 @@ const Dashboard = (): ReactElement => {
   };
 
   useEffect(() => {
-    const setupStatusSubscription = api.setupStatus$().subscribe({
-      next: (status: SetupStatusResponse | null) => {
-        if (status && status.status === "Syncing light clients") {
-          setSyncInProgress(true);
-          setMenuItemTooltipMsg([
-            "Waiting for initial sync...",
-            `Bitcoin: ${status.details["lndbtc"]}`,
-            `Litecoin: ${status.details["lndltc"]}`,
-          ]);
-        }
-      },
-      error: () => {
-        history.push(Path.CONNECTION_FAILED);
-      },
-      complete: () => {
-        setSyncInProgress(false);
-        setMenuItemTooltipMsg([]);
-      },
-    });
+    const lndsReady$ = interval(5000).pipe(
+      mergeMap(() => api.status$()),
+      map((statuses: Status[]) => {
+        const lndbtc = statuses
+          .filter((status: Status) => status.service === "lndbtc")
+          .map((status: Status) => status.status)[0];
+        const lndltc = statuses
+          .filter((status: Status) => status.service === "lndltc")
+          .map((status: Status) => status.status)[0];
+        return { lndbtc, lndltc };
+      }),
+      filter(({ lndbtc, lndltc }) => {
+        return lndbtc.includes("Ready") && lndltc.includes("Ready");
+      })
+    );
+    const setupStatusSubscription = api
+      .setupStatus$()
+      .pipe(takeUntil(lndsReady$))
+      .subscribe({
+        next: (status: SetupStatusResponse | null) => {
+          if (status && status.status === "Syncing light clients") {
+            setSyncInProgress(true);
+            setMenuItemTooltipMsg([
+              "Waiting for initial sync...",
+              `Bitcoin: ${status.details["lndbtc"]}`,
+              `Litecoin: ${status.details["lndltc"]}`,
+            ]);
+          }
+        },
+        error: () => {
+          history.push(Path.CONNECTION_FAILED);
+        },
+        complete: () => {
+          setSyncInProgress(false);
+          setMenuItemTooltipMsg([]);
+        },
+      });
     return () => setupStatusSubscription.unsubscribe();
   }, [history]);
 
