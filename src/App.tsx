@@ -8,10 +8,10 @@ import {
   Route,
   Switch,
 } from "react-router-dom";
-import Dashboard from "./dashboard/Dashboard";
-import { Path } from "./router/Path";
 import ConnectionFailed from "./common/ConnectionFailed";
 import NotFound from "./common/NotFound";
+import Dashboard from "./dashboard/Dashboard";
+import { Path } from "./router/Path";
 
 const darkTheme = createMuiTheme({
   palette: {

@@ -6,9 +6,10 @@ import {
   Theme,
   Typography,
 } from "@material-ui/core";
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { Path } from "../router/Path";
+import { isElectron, sendMessageToParent } from "./appUtil";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -25,6 +26,12 @@ const useStyles = makeStyles((theme: Theme) =>
 const ConnectionFailed = (): ReactElement => {
   const history = useHistory();
   const classes = useStyles();
+
+  useEffect(() => {
+    if (isElectron()) {
+      sendMessageToParent("connectionFailed");
+    }
+  }, []);
 
   return (
     <Grid

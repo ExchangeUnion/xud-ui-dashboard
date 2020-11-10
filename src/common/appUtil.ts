@@ -5,8 +5,12 @@ export const isElectron = (): boolean => {
 
 export const copyToClipboard = (value: string | number): void => {
   if (isElectron()) {
-    (window as any).electron.copyToClipboard(value);
+    sendMessageToParent(`copyToClipboard: ${value}`);
     return;
   }
   navigator.clipboard.writeText(value.toString());
+};
+
+export const sendMessageToParent = (message: string): void => {
+  window.parent.postMessage(message, "*");
 };

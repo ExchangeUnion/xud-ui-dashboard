@@ -15,18 +15,18 @@ import {
   useHistory,
   useRouteMatch,
 } from "react-router-dom";
-import { isElectron } from "../common/appUtil";
+import { interval } from "rxjs";
+import { filter, map, mergeMap, takeUntil } from "rxjs/operators";
+import api from "../api";
+import { isElectron, sendMessageToParent } from "../common/appUtil";
+import NotFound from "../common/NotFound";
+import { SetupStatusResponse } from "../models/SetupStatusResponse";
+import { Status } from "../models/Status";
 import { Path } from "../router/Path";
 import MenuItem, { MenuItemProps } from "./menu/MenuItem";
 import Overview from "./overview/Overview";
 import Tradehistory from "./tradehistory/Tradehistory";
 import Wallets from "./wallet/Wallets";
-import NotFound from "../common/NotFound";
-import api from "../api";
-import { SetupStatusResponse } from "../models/SetupStatusResponse";
-import { interval } from "rxjs";
-import { filter, map, mergeMap, takeUntil } from "rxjs/operators";
-import { Status } from "../models/Status";
 
 export const drawerWidth = 200;
 
@@ -54,8 +54,8 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const Dashboard = (): ReactElement => {
-  const history = useHistory();
   const classes = useStyles();
+  const history = useHistory();
   const { path } = useRouteMatch();
   const [syncInProgress, setSyncInProgress] = useState(false);
   const [menuItemTooltipMsg, setMenuItemTooltipMsg] = useState<string[]>([]);
@@ -83,8 +83,7 @@ const Dashboard = (): ReactElement => {
   ];
 
   const disconnect = (): void => {
-    // TODO: send message to parent
-    history.push(Path.HOME);
+    sendMessageToParent("disconnect");
   };
 
   useEffect(() => {
