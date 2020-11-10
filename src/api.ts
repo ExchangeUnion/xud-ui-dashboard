@@ -1,11 +1,12 @@
 import { from, Observable } from "rxjs";
 import { catchError, mergeMap } from "rxjs/operators";
+import { isElectron } from "./common/appUtil";
 import { GetbalanceResponse } from "./models/GetbalanceResponse";
 import { Info } from "./models/Info";
+import { SetupStatusResponse } from "./models/SetupStatusResponse";
 import { Status } from "./models/Status";
 import { TradehistoryResponse } from "./models/TradehistoryResponse";
 import { TradinglimitsResponse } from "./models/TradinglimitsResponse";
-import { isElectron } from "./common/appUtil";
 
 const url =
   process.env.NODE_ENV === "development"
@@ -14,10 +15,14 @@ const url =
 const path = `${url}/api/v1`;
 const xudPath = `${path}/xud`;
 
-const logAndThrow = (url: string, err: string) => {
+const logError = (url: string, err: string) => {
   if (isElectron()) {
     (window as any).electron.logError(`requestUrl: ${url}; error: ${err}`);
   }
+};
+
+const logAndThrow = (url: string, err: string) => {
+  logError(url, err);
   throw err;
 };
 
@@ -28,7 +33,59 @@ const fetchJsonResponse = <T>(url: string): Observable<T> => {
   );
 };
 
+const fetchStreamResponse = <T>(url: string): Observable<T | null> => {
+  return new Observable((subscriber) => {
+    fetch(url)
+      .then((response) => {
+        if (!response.body) {
+          subscriber.next(null);
+          return;
+        }
+        const reader = response.body.getReader();
+
+        const processText = ({
+          done,
+          value,
+        }: any): Promise<
+          | ReadableStreamReadResult<T>
+          | ReadableStreamReadDoneResult<T>
+          | undefined
+        > => {
+          if (done) {
+            subscriber.complete();
+            return Promise.resolve(undefined);
+          }
+
+          const stringValue = new TextDecoder("utf-8").decode(value);
+          const items = stringValue
+            .split("\n")
+            .map((item) => item.trim())
+            .filter((item) => !!item);
+          const newestItem = items[items.length - 1];
+          try {
+            const jsonValue = JSON.parse(newestItem);
+            subscriber.next(jsonValue);
+          } catch (err) {
+            subscriber.next(null);
+          }
+          return reader.read().then(processText);
+        };
+
+        reader.read().then(processText);
+      })
+      .catch((e) => {
+        logError(url, e);
+        subscriber.error(e);
+      });
+  });
+};
+
 export default {
+  setupStatus$(): Observable<SetupStatusResponse | null> {
+    const requestUrl = `${path}/setup-status`;
+    return fetchStreamResponse(requestUrl);
+  },
+
   status$(): Observable<Status[]> {
     return fetchJsonResponse(`${path}/status`);
   },

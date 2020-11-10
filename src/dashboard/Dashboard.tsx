@@ -7,7 +7,7 @@ import AccountBalanceWalletOutlinedIcon from "@material-ui/icons/AccountBalanceW
 import CachedIcon from "@material-ui/icons/Cached";
 import HistoryIcon from "@material-ui/icons/History";
 import RemoveRedEyeOutlinedIcon from "@material-ui/icons/RemoveRedEyeOutlined";
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import {
   Redirect,
   Route,
@@ -22,6 +22,8 @@ import Overview from "./overview/Overview";
 import Tradehistory from "./tradehistory/Tradehistory";
 import Wallets from "./wallet/Wallets";
 import NotFound from "../common/NotFound";
+import api from "../api";
+import { SetupStatusResponse } from "../models/SetupStatusResponse";
 
 export const drawerWidth = 200;
 
@@ -52,25 +54,28 @@ const Dashboard = (): ReactElement => {
   const history = useHistory();
   const classes = useStyles();
   const { path } = useRouteMatch();
+  const [syncInProgress, setSyncInProgress] = useState(false);
+  const [menuItemTooltipMsg, setMenuItemTooltipMsg] = useState<string[]>([]);
+
   const menuItems: MenuItemProps[] = [
     {
       path: Path.OVERVIEW,
       text: "Overview",
       component: Overview,
-      icon: <RemoveRedEyeOutlinedIcon />,
+      icon: RemoveRedEyeOutlinedIcon,
       isFallback: true,
     },
     {
       path: Path.WALLETS,
       text: "Wallets",
       component: Wallets,
-      icon: <AccountBalanceWalletOutlinedIcon />,
+      icon: AccountBalanceWalletOutlinedIcon,
     },
     {
       path: Path.TRADEHISTORY,
       text: "Tradehistory",
       component: Tradehistory,
-      icon: <HistoryIcon />,
+      icon: HistoryIcon,
     },
   ];
 
@@ -78,6 +83,29 @@ const Dashboard = (): ReactElement => {
     // TODO: send message to parent
     history.push(Path.HOME);
   };
+
+  useEffect(() => {
+    const setupStatusSubscription = api.setupStatus$().subscribe({
+      next: (status: SetupStatusResponse | null) => {
+        if (status && status.status === "Syncing light clients") {
+          setSyncInProgress(true);
+          setMenuItemTooltipMsg([
+            "Waiting for initial sync...",
+            `Bitcoin: ${status.details["lndbtc"]}`,
+            `Litecoin: ${status.details["lndltc"]}`,
+          ]);
+        }
+      },
+      error: () => {
+        history.push(Path.CONNECTION_FAILED);
+      },
+      complete: () => {
+        setSyncInProgress(false);
+        setMenuItemTooltipMsg([]);
+      },
+    });
+    return () => setupStatusSubscription.unsubscribe();
+  }, [history]);
 
   return (
     <Box>
@@ -106,6 +134,8 @@ const Dashboard = (): ReactElement => {
                 key={item.text}
                 icon={item.icon}
                 isFallback={item.isFallback}
+                isDisabled={item.path !== Path.OVERVIEW && syncInProgress}
+                tooltipTextRows={menuItemTooltipMsg}
               />
             ))}
           </List>
