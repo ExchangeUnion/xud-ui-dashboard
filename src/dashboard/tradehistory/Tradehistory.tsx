@@ -36,7 +36,7 @@ export type TradeRow = {
   price: number;
   priceStr: string;
   orderId: string;
-  executedAt: string;
+  executedAt: Date;
   role: string;
   side: string;
   amount: number;
@@ -72,6 +72,19 @@ const styles = (theme: Theme) => {
       marginLeft: theme.spacing(1),
     },
   });
+};
+
+const getDisplayValue = (
+  row: TradeRow,
+  prop: keyof TradeRow
+): string | number => {
+  return row[prop] instanceof Date
+    ? row[prop].toLocaleString("en-GB")
+    : (row[prop] as string | number);
+};
+
+const getRowId = (row: TradeRow): string => {
+  return row.swapHash ? row.swapHash : row.orderId;
 };
 
 class Tradehistory extends DashboardContent<PropsType, StateType> {
@@ -132,7 +145,7 @@ class Tradehistory extends DashboardContent<PropsType, StateType> {
         amountStr: `${amount.toFixed(8)} ${baseCurrency}`,
         priceStr: `${trade.price.toFixed(8)} ${quoteCurrency}`,
         orderId: order.id,
-        executedAt: new Date(Number(trade.executed_at)).toLocaleString("en-GB"),
+        executedAt: new Date(Number(trade.executed_at)),
         role: trade.role.toLowerCase(),
         side: trade.side.toLowerCase(),
         amount: amount,
@@ -206,7 +219,7 @@ class Tradehistory extends DashboardContent<PropsType, StateType> {
                       container
                       justify="space-between"
                       wrap="nowrap"
-                      key={row.swapHash}
+                      key={getRowId(row)}
                     >
                       {this.tableHeaders.map((column) => (
                         <Grid
@@ -215,7 +228,7 @@ class Tradehistory extends DashboardContent<PropsType, StateType> {
                           xs={column.gridsXs || 2}
                           xl={column.gridsXl || column.gridsXs || 2}
                           className={classes.tableCell}
-                          key={`${row.swapHash}_${column.key}`}
+                          key={`${getRowId(row)}_${column.key}`}
                         >
                           {column.copyIcon && row[column.key] ? (
                             <Grid
@@ -228,14 +241,18 @@ class Tradehistory extends DashboardContent<PropsType, StateType> {
                               <IconButton
                                 size="small"
                                 className={classes.tableCellIcon}
-                                onClick={() => copyToClipboard(row[column.key])}
+                                onClick={() =>
+                                  copyToClipboard(
+                                    getDisplayValue(row, column.key)
+                                  )
+                                }
                               >
                                 <FileCopyOutlinedIcon fontSize="inherit" />
                               </IconButton>
                             </Grid>
                           ) : (
                             <Typography variant="body2" component="span">
-                              {row[column.key]}
+                              {getDisplayValue(row, column.key)}
                             </Typography>
                           )}
                         </Grid>
