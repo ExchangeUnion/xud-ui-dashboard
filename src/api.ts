@@ -1,5 +1,5 @@
-import { from, Observable } from "rxjs";
-import { catchError, mergeMap } from "rxjs/operators";
+import {from, fromEvent, Observable, of} from "rxjs";
+import {catchError, map, mergeMap, switchMap, take} from "rxjs/operators";
 import { isElectron, sendMessageToParent } from "./common/appUtil";
 import { GetbalanceResponse } from "./models/GetbalanceResponse";
 import { Info } from "./models/Info";
@@ -7,6 +7,7 @@ import { SetupStatusResponse } from "./models/SetupStatusResponse";
 import { Status } from "./models/Status";
 import { TradehistoryResponse } from "./models/TradehistoryResponse";
 import { TradinglimitsResponse } from "./models/TradinglimitsResponse";
+import io from "socket.io-client";
 
 const url =
   process.env.NODE_ENV === "development"
@@ -80,6 +81,13 @@ const fetchStreamResponse = <T>(url: string): Observable<T | null> => {
   });
 };
 
+const io$: Observable<SocketIOClient.Socket> = of(
+  io(url!, {
+    path: "/socket.io/",
+    transports: ["websocket"],
+  })
+)
+
 export default {
   setupStatus$(): Observable<SetupStatusResponse | null> {
     const requestUrl = `${path}/setup-status`;
@@ -117,4 +125,24 @@ export default {
   tradehistory$(): Observable<TradehistoryResponse> {
     return fetchJsonResponse(`${xudPath}/tradehistory`);
   },
+
+  createConsole$(): Observable<string> {
+    return from(fetch(`${path}/consoles`, {method: "POST"})).pipe(
+      mergeMap(resp => resp.json())
+    ).pipe(
+      map(j => j.id)
+    );
+  },
+
+  sio: {
+    io$,
+    console$(id: string): Observable<any> {
+      return io$
+        .pipe(
+          mergeMap((io) =>
+            fromEvent(io, `console-${id}`)
+          )
+        )
+    },
+  }
 };
