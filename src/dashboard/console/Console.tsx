@@ -5,7 +5,7 @@ import {FitAddon} from "xterm-addon-fit";
 import "xterm/css/xterm.css";
 import api from "../../api";
 import {fromEvent, Subscription} from "rxjs";
-import {every, switchMap, take, takeLast} from "rxjs/operators";
+import {switchMap} from "rxjs/operators";
 
 type PropsType = RouteComponentProps<{ param1: string }>;
 
