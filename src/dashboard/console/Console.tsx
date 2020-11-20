@@ -6,6 +6,7 @@ import "xterm/css/xterm.css";
 import api from "../../api";
 import {fromEvent, Subscription} from "rxjs";
 import {switchMap} from "rxjs/operators";
+import {Box} from "@material-ui/core";
 
 type PropsType = RouteComponentProps<{ param1: string }>;
 
@@ -25,6 +26,8 @@ class Console extends Component<PropsType, StateType> {
 
   s3!: Subscription
 
+  fitAddon!: FitAddon
+
   constructor(props: PropsType) {
     super(props);
 
@@ -43,9 +46,13 @@ class Console extends Component<PropsType, StateType> {
   }
 
   setupTerminal() {
-    this.term = new Terminal({});
+    this.term = new Terminal({
+      fontSize: 12,
+      fontFamily: "Menlo, Ubuntu Mono, Fira Code, Courier New, Courier, monospace"
+    });
 
     const fitAddon = new FitAddon();
+    this.fitAddon = fitAddon;
     this.term.loadAddon(fitAddon);
 
     this.term.onData(this.onData)
@@ -71,6 +78,7 @@ class Console extends Component<PropsType, StateType> {
 
     if (this.ref.current) {
       this.term.open(this.ref.current);
+      this.fitAddon.fit();
 
       api.createConsole$().subscribe(
         (id) => {
@@ -98,6 +106,25 @@ class Console extends Component<PropsType, StateType> {
     this.term.dispose()
   }
 
+  private onData(data: string) {
+    api.sio.io$
+      .subscribe((io) => {
+        io.emit(`console.${this.state.id}.input`, data)
+      })
+  }
+
+  private onResize(event: { cols: number; rows: number }) {
+    console.log("resize", event)
+    this.fitAddon.fit()
+    api.sio.io$
+      .subscribe((io) => {
+        io.emit("resize", JSON.stringify({
+          id: this.state.id,
+          size: event
+        }))
+      })
+  }
+
   render(): ReactElement {
     return (
       <div>
@@ -107,20 +134,6 @@ class Console extends Component<PropsType, StateType> {
         <div ref={this.ref}/>
       </div>
     );
-  }
-
-  private onData(data: string) {
-    api.sio.io$
-      .subscribe((io) => {
-        console.log("io", "emit", io)
-        console.log("emit", `console-${this.state.id}`, data)
-        io.emit(`console-${this.state.id}`, data)
-        // io.emit("test", data)
-      })
-  }
-
-  private onResize(event: { cols: number; rows: number }) {
-    // TODO to be implemented
   }
 }
 

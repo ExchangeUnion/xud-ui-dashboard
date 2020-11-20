@@ -140,7 +140,7 @@ export default {
       return io$
         .pipe(
           mergeMap((io) =>
-            fromEvent(io, `console-${id}-output`)
+            fromEvent(io, `console.${id}.output`)
           )
         )
     },
