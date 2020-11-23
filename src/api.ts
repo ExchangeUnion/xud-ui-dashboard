@@ -1,7 +1,11 @@
-import { from, fromEvent, Observable, of } from "rxjs";
+import { from, fromEvent, Observable, of, throwError } from "rxjs";
 import { catchError, mergeMap } from "rxjs/operators";
 import { isElectron, sendMessageToParent } from "./common/appUtil";
+import { CreateReverseSwapRequest } from "./models/CreateReverseSwapRequest";
+import { CreateReverseSwapResponse } from "./models/CreateReverseSwapResponse";
+import { DepositResponse } from "./models/DepositResponse";
 import { GetbalanceResponse } from "./models/GetbalanceResponse";
+import { GetServiceInfoResponse } from "./models/GetServiceInfoResponse";
 import { Info } from "./models/Info";
 import { SetupStatusResponse } from "./models/SetupStatusResponse";
 import { Status } from "./models/Status";
@@ -15,10 +19,12 @@ const url =
     : window.location.origin;
 const path = `${url}/api/v1`;
 const xudPath = `${path}/xud`;
+const boltzPath = `${path}/boltz`;
 
 const logError = (url: string, err: string) => {
   if (isElectron()) {
-    sendMessageToParent(`logError: requestUrl: ${url}; error: ${err}`);
+    const errorMsg = typeof err === "string" ? err : JSON.stringify(err);
+    sendMessageToParent(`logError: requestUrl: ${url}; error: ${errorMsg}`);
   }
 };
 
@@ -27,9 +33,17 @@ const logAndThrow = (url: string, err: string) => {
   throw err;
 };
 
-const fetchJsonResponse = <T>(url: string): Observable<T> => {
-  return from(fetch(`${url}`)).pipe(
-    mergeMap((resp: Response) => resp.json()),
+const fetchJsonResponse = <T>(
+  url: string,
+  body?: BodyInit,
+  method: "GET" | "POST" | "PUT" | "DELETE" = "GET"
+): Observable<T> => {
+  return from(fetch(`${url}`, { method, body })).pipe(
+    mergeMap((resp: Response) =>
+      from(resp.json()).pipe(
+        mergeMap((body) => (resp.ok ? of(body) : throwError(body)))
+      )
+    ),
     catchError((err) => logAndThrow(url, err))
   );
 };
@@ -124,6 +138,29 @@ export default {
 
   tradehistory$(): Observable<TradehistoryResponse> {
     return fetchJsonResponse(`${xudPath}/tradehistory`);
+  },
+  boltzDeposit$(currency: string): Observable<DepositResponse> {
+    return fetchJsonResponse(`${boltzPath}/deposit/${currency.toLowerCase()}`);
+  },
+
+  boltzServiceInfo$(currency: string): Observable<GetServiceInfoResponse> {
+    return fetchJsonResponse(
+      `${boltzPath}/service-info/${currency.toLowerCase()}`
+    );
+  },
+
+  boltzWithdraw$(
+    currency: string,
+    data: CreateReverseSwapRequest
+  ): Observable<CreateReverseSwapResponse> {
+    const msgBody: FormData = new FormData();
+    msgBody.append("amount", data.amount.toString());
+    msgBody.append("address", data.address);
+    return fetchJsonResponse(
+      `${boltzPath}/withdraw/${currency.toLowerCase()}`,
+      msgBody,
+      "POST"
+    );
   },
 
   sio: {

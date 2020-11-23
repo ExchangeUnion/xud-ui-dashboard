@@ -18,7 +18,8 @@ import GetAppOutlinedIcon from "@material-ui/icons/GetAppOutlined";
 import React, { ReactElement, useState } from "react";
 import api from "../../api";
 import { formatDateTimeForFilename } from "../../common/dateUtil";
-import { SERVICES_WITH_ADDITIONAL_INFO, XUD_NOT_READY } from "../../constants";
+import { isServiceReady } from "../../common/serviceUtil";
+import { SERVICES_WITH_ADDITIONAL_INFO } from "../../constants";
 import { Status } from "../../models/Status";
 import ServiceDetails from "./ServiceDetails";
 
@@ -88,16 +89,6 @@ const OverviewItem = (props: OverviewItemProps): ReactElement => {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [errorMsgOpen, setErrorMsgOpen] = useState(false);
   const classes = useStyles();
-
-  const isServiceReady = (status: Status): boolean => {
-    return (
-      status.status.startsWith("Ready") ||
-      (status.service === "xud" &&
-        !XUD_NOT_READY.some((str) => status.status.startsWith(str))) ||
-      (status.service === "boltz" &&
-        [...status.status.matchAll(new RegExp("down", "g"))].length === 1)
-    );
-  };
 
   const statusDotClass = `${classes.statusDot} ${
     isServiceReady(status) ? classes.active : classes.inactive
