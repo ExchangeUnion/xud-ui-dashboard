@@ -143,7 +143,7 @@ const Dashboard = (): ReactElement => {
             component="p"
             color="textSecondary"
           >
-            XUD Explorer
+            XUD UI
           </Typography>
           <List className={classes.menuContainer}>
             {menuItems.map((item) => (
