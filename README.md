@@ -1,4 +1,4 @@
-# XUD EXPLORER DASHBOARD
+# XUD UI DASHBOARD
 
 A graphical user interface for interacting with a [xud-docker](https://github.com/ExchangeUnion/xud-docker) environment.
 
