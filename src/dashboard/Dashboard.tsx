@@ -51,6 +51,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: drawerWidth,
       backgroundColor: theme.palette.background.default,
       padding: theme.spacing(3),
+      height: "100vh",
     },
   })
 );

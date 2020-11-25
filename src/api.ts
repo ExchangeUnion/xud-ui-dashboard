@@ -1,5 +1,5 @@
-import {from, fromEvent, Observable, of} from "rxjs";
-import {catchError, map, mergeMap, switchMap, take} from "rxjs/operators";
+import { from, fromEvent, Observable, of } from "rxjs";
+import { catchError, map, mergeMap } from "rxjs/operators";
 import { isElectron, sendMessageToParent } from "./common/appUtil";
 import { GetbalanceResponse } from "./models/GetbalanceResponse";
 import { Info } from "./models/Info";
@@ -86,7 +86,7 @@ const io$: Observable<SocketIOClient.Socket> = of(
     path: "/socket.io/",
     transports: ["websocket"],
   })
-)
+);
 
 export default {
   setupStatus$(): Observable<SetupStatusResponse | null> {
@@ -127,22 +127,15 @@ export default {
   },
 
   createConsole$(): Observable<string> {
-    return from(fetch(`${path}/consoles`, {method: "POST"})).pipe(
-      mergeMap(resp => resp.json())
-    ).pipe(
-      map(j => j.id)
-    );
+    return from(fetch(`${path}/consoles`, { method: "POST" }))
+      .pipe(mergeMap((resp) => resp.json()))
+      .pipe(map((j) => j.id));
   },
 
   sio: {
     io$,
     console$(id: string): Observable<any> {
-      return io$
-        .pipe(
-          mergeMap((io) =>
-            fromEvent(io, `console.${id}.output`)
-          )
-        )
+      return io$.pipe(mergeMap((io) => fromEvent(io, `console.${id}.output`)));
     },
-  }
+  },
 };
