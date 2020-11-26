@@ -1,19 +1,43 @@
-import { createStyles, makeStyles, Theme, Tooltip } from "@material-ui/core";
+import { createStyles, makeStyles, Theme, Typography } from "@material-ui/core";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import InfoIcon from "@material-ui/icons/InfoOutlined";
-import React, { ReactElement } from "react";
-import { satsToCoinsStr } from "../../common/currencyUtil";
+import React, { ReactElement, useEffect, useState } from "react";
+import { Observable, Subject } from "rxjs";
+import { filter, mergeMap, pluck, take } from "rxjs/operators";
+import { getErrorMsg } from "../../common/errorUtil";
+import { isServiceReady } from "../../common/serviceUtil";
 import Balance from "../../models/Balance";
+import { Info } from "../../models/Info";
+import { Status } from "../../models/Status";
 import { TradingLimits } from "../../models/TradingLimits";
-import WalletRow, { WalletSubrow } from "./WalletRow";
+import BalanceSummary from "./BalanceSummary";
+import Deposit from "./Deposit";
+import InfoMessage from "./InfoMessage";
+import LimitsSummary from "./LimitsSummary";
+import WalletItemHeader from "./WalletItemHeader";
+import WalletTransactionButton from "./WalletTransactionButton";
+import Withdraw from "./Withdraw";
 
 export type WalletItemProps = {
   currency: string;
   balance: Balance;
+  getInfo$: Observable<Info>;
+  getBoltzStatus$: Observable<Status>;
   limits?: TradingLimits;
+};
+
+export enum WalletItemViewType {
+  BALANCE = "BALANCE",
+  LIMITS = "LIMITS",
+  DEPOSIT = "DEPOSIT",
+  WITHDRAW = "WITHDRAW",
+}
+
+type WalletItemView = {
+  type: WalletItemViewType;
+  component: ReactElement;
+  title?: string;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -23,6 +47,15 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     cardContent: {
       padding: theme.spacing(3),
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+    },
+    cardBody: {
+      height: "100%",
+    },
+    viewContent: {
+      paddingTop: theme.spacing(3),
     },
     rowsGroup: {
       paddingTop: theme.spacing(2),
@@ -30,115 +63,172 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-function WalletItem(props: WalletItemProps): ReactElement {
+const transactionButtonsVisible = (currency: string): boolean =>
+  ["BTC", "LTC"].includes(currency);
+
+const WalletItem = (props: WalletItemProps): ReactElement => {
   const classes = useStyles();
-  const { balance, currency, limits } = props;
-  const offChainSubrows: WalletSubrow[] = [];
-  const onChainSubrows: WalletSubrow[] = [];
+  const { balance, currency, limits, getInfo$, getBoltzStatus$ } = props;
+  const [activeViewType, setActiveViewType] = useState(
+    WalletItemViewType.BALANCE
+  );
+  const [refreshSubject, setRefreshSubject] = useState<
+    Subject<void> | undefined
+  >(undefined);
+  const [transactionsDisabledCause, setTransactionsDisabledCause] = useState(
+    ""
+  );
 
-  const addToRowsIfNotZero = (
-    rows: WalletSubrow[],
-    value: string | number,
-    label: string
-  ): void => {
-    if (Number(value)) {
-      rows.push({
-        label: label,
-        value: satsToCoinsStr(value),
+  const isActive = (...type: WalletItemViewType[]): boolean =>
+    type.includes(activeViewType);
+
+  useEffect(() => {
+    if (!transactionButtonsVisible(currency)) {
+      return;
+    }
+    const network$ = getInfo$.pipe(take(1), pluck("network"));
+    network$.subscribe((value) => {
+      if (value.toLowerCase() === "simnet") {
+        setTransactionsDisabledCause("Not available on Simnet");
+      }
+    });
+    const sub = network$
+      .pipe(
+        filter((value) => value !== "simnet"),
+        mergeMap(() => getBoltzStatus$)
+      )
+      .subscribe({
+        next: (status) =>
+          setTransactionsDisabledCause(
+            isServiceReady(status)
+              ? ""
+              : `Boltz is not ready. Status: ${status.status}`
+          ),
+        error: (err) =>
+          setTransactionsDisabledCause(
+            `Boltz is unavailable. Error: ${getErrorMsg(err)}`
+          ),
       });
-    }
-  };
+    return () => sub.unsubscribe();
+  }, [getInfo$, getBoltzStatus$, currency]);
 
-  addToRowsIfNotZero(
-    offChainSubrows,
-    balance.pending_channel_balance,
-    "pending"
-  );
-  addToRowsIfNotZero(
-    offChainSubrows,
-    balance.inactive_channel_balance,
-    "inactive"
-  );
-  addToRowsIfNotZero(
-    onChainSubrows,
-    balance.unconfirmed_wallet_balance,
-    "pending"
-  );
+  const views: WalletItemView[] = [
+    {
+      type: WalletItemViewType.BALANCE,
+      component: <BalanceSummary balance={balance} />,
+    },
+    {
+      type: WalletItemViewType.LIMITS,
+      component: <LimitsSummary limits={limits!} currency={currency} />,
+      title: "Trading Limits",
+    },
+    {
+      type: WalletItemViewType.DEPOSIT,
+      component: (
+        <Deposit
+          currency={currency}
+          refreshSubject={refreshSubject!}
+          getInfo$={getInfo$}
+        />
+      ),
+      title: "Deposit",
+    },
+    {
+      type: WalletItemViewType.WITHDRAW,
+      component: (
+        <Withdraw
+          currency={currency}
+          onClose={() => setActiveViewType(WalletItemViewType.BALANCE)}
+        />
+      ),
+      title: "Withdraw",
+    },
+  ];
 
-  const getLimitsRow = (buy: boolean): ReactElement => {
-    const label = `Max ${buy ? "buy" : "sell"}`;
-    const hints = [];
-    const reserved = Number(buy ? limits!.reserved_buy : limits!.reserved_sell);
-    if (reserved) {
-      hints.push(`in orders: ${satsToCoinsStr(reserved)}`);
-    }
-    if (buy && !["BTC", "LTC"].includes(currency)) {
-      hints.push("auto-extended");
-    }
-
-    return (
-      <WalletRow
-        label={label}
-        value={satsToCoinsStr(buy ? limits!.max_buy : limits!.max_sell)}
-        labelItem={
-          !!hints.length && (
-            <Tooltip
-              title={hints.map((hint) => (
-                <div>{hint}</div>
-              ))}
-            >
-              <InfoIcon fontSize="inherit" />
-            </Tooltip>
-          )
-        }
-      />
-    );
-  };
+  useEffect(() => {
+    setRefreshSubject(new Subject<void>());
+  }, []);
 
   return (
-    <Grid item xs={12} sm={6} lg={4}>
+    <Grid item xs={12} md={6} xl={4}>
       <Card className={classes.card}>
         <CardContent className={classes.cardContent}>
-          <Typography component="h2" variant="h6" color="textSecondary">
-            {currency}
-          </Typography>
-          <Grid container direction="column">
-            <Grid item container className={classes.rowsGroup}>
-              <Typography component="h3" variant="overline">
-                <strong>Balance</strong>
-              </Typography>
-              <WalletRow
-                label="Layer 1"
-                subrows={onChainSubrows}
-                value={satsToCoinsStr(balance.wallet_balance)}
-                labelItem={
-                  <Tooltip title="on-chain, not tradable">
-                    <InfoIcon fontSize="inherit" />
-                  </Tooltip>
-                }
-              />
-              <WalletRow
-                label="Layer 2"
-                value={satsToCoinsStr(balance.channel_balance)}
-                subrows={offChainSubrows}
-                labelItem={
-                  <Tooltip title="off-chain, tradable">
-                    <InfoIcon fontSize="inherit" />
-                  </Tooltip>
-                }
-              />
-              <WalletRow
-                label="Total"
-                value={satsToCoinsStr(balance.total_balance)}
-              />
-            </Grid>
-            {limits && (
-              <Grid item container className={classes.rowsGroup}>
-                <Typography component="h3" variant="overline">
-                  <strong>Trading limits</strong>
-                </Typography>
-                {getLimitsRow(true)}
-                {getLimitsRow(false)}
+          <WalletItemHeader
+            currency={currency}
+            refreshSubject={refreshSubject!}
+            isActive={isActive}
+            setActiveViewType={setActiveViewType}
+          />
+          <Grid
+            item
+            container
+            direction="column"
+            justify="space-between"
+            className={classes.cardBody}
+          >
+            {views.map(
+              (view) =>
+                isActive(view.type) && (
+                  <Grid
+                    key={view.type}
+                    item
+                    container
+                    direction="column"
+                    className={classes.rowsGroup}
+                  >
+                    {!!view.title && (
+                      <Grid item container justify="center">
+                        <Typography
+                          component="h3"
+                          variant="overline"
+                          align="center"
+                        >
+                          <strong>{view.title}</strong>
+                        </Typography>
+                      </Grid>
+                    )}
+                    <Grid
+                      item
+                      container
+                      direction="column"
+                      className={classes.viewContent}
+                    >
+                      {view.component}
+                    </Grid>
+                  </Grid>
+                )
+            )}
+            {isActive(WalletItemViewType.BALANCE, WalletItemViewType.LIMITS) &&
+              transactionButtonsVisible(currency) && (
+                <Grid
+                  item
+                  container
+                  justify="center"
+                  spacing={6}
+                  className={classes.rowsGroup}
+                >
+                  <WalletTransactionButton
+                    text="Deposit"
+                    disabledHint={transactionsDisabledCause}
+                    onClick={() =>
+                      setActiveViewType(WalletItemViewType.DEPOSIT)
+                    }
+                  />
+                  <WalletTransactionButton
+                    text="Withdraw"
+                    disabledHint={transactionsDisabledCause}
+                    onClick={() =>
+                      setActiveViewType(WalletItemViewType.WITHDRAW)
+                    }
+                  />
+                </Grid>
+              )}
+            {isActive(
+              WalletItemViewType.DEPOSIT,
+              WalletItemViewType.WITHDRAW
+            ) && (
+              <Grid item container>
+                <InfoMessage message="Check detailed status in the console tab" />
               </Grid>
             )}
           </Grid>
@@ -146,6 +236,6 @@ function WalletItem(props: WalletItemProps): ReactElement {
       </Card>
     </Grid>
   );
-}
+};
 
 export default WalletItem;

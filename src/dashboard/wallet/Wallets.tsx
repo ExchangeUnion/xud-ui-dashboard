@@ -1,20 +1,14 @@
-import {
-  Card,
-  createStyles,
-  Theme,
-  Typography,
-  WithStyles,
-} from "@material-ui/core";
+import { createStyles, WithStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
-import ReportProblemOutlinedIcon from "@material-ui/icons/ReportProblemOutlined";
 import React, { ReactElement } from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
+import { timer } from "rxjs";
+import { shareReplay, switchMap } from "rxjs/operators";
 import api from "../../api";
 import PageCircularProgress from "../../common/PageCircularProgress";
 import { GetbalanceResponse } from "../../models/GetbalanceResponse";
 import { TradinglimitsResponse } from "../../models/TradinglimitsResponse";
-import { drawerWidth } from "../Dashboard";
 import DashboardContent, { DashboardContentState } from "../DashboardContent";
 import ViewDisabled from "../ViewDisabled";
 import WalletItem from "./WalletItem";
@@ -27,20 +21,8 @@ type StateType = DashboardContentState & {
   limits: TradinglimitsResponse | undefined;
 };
 
-const styles = (theme: Theme) => {
-  const footerPadding = theme.spacing(3);
+const styles = () => {
   return createStyles({
-    footer: {
-      position: "fixed",
-      bottom: "5px",
-      left: drawerWidth + footerPadding,
-      backgroundColor: theme.palette.warning.main,
-      color: theme.palette.warning.contrastText,
-      width: `calc(100% - ${drawerWidth + footerPadding * 2}px)`,
-      padding: "10px",
-      textAlign: "center",
-      opacity: 0.8,
-    },
     itemsContainer: {
       paddingBottom: "45px",
     },
@@ -48,6 +30,16 @@ const styles = (theme: Theme) => {
 };
 
 class Wallets extends DashboardContent<PropsType, StateType> {
+  getInfo$ = timer(0, 60000).pipe(
+    switchMap(() => api.getinfo$()),
+    shareReplay(1)
+  );
+
+  getBoltzStatus$ = timer(0, 5000).pipe(
+    switchMap(() => api.statusByService$("boltz")),
+    shareReplay(1)
+  );
+
   constructor(props: PropsType) {
     super(props);
     this.state = { balances: undefined, limits: undefined };
@@ -83,6 +75,8 @@ class Wallets extends DashboardContent<PropsType, StateType> {
                   key={currency}
                   currency={currency}
                   balance={balances![currency]}
+                  getInfo$={this.getInfo$}
+                  getBoltzStatus$={this.getBoltzStatus$}
                   limits={this.state.limits?.limits[currency]}
                 ></WalletItem>
               ))
@@ -95,16 +89,6 @@ class Wallets extends DashboardContent<PropsType, StateType> {
             )}
           </Grid>
         )}
-        <Card className={classes.footer}>
-          <Grid container item alignItems="center" justify="center">
-            <ReportProblemOutlinedIcon />
-            &nbsp;
-            <Typography variant="body2" component="span">
-              Currently, wallets are in read-only mode. Use XUD Docker CLI to
-              deposit and withdraw.
-            </Typography>
-          </Grid>
-        </Card>
       </>
     );
   }
