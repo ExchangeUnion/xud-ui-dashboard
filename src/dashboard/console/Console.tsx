@@ -212,7 +212,7 @@ class Console extends Component<PropsType, StateType> {
 
     return (
       <div className={classes.wrapper}>
-        <Typography component="h6" variant="h6" className={classes.title}>
+        <Typography component="p" variant="body2" className={classes.title}>
           Type {<span className={classes.code}>help</span>} to show a list of
           available commands
         </Typography>
