@@ -7,6 +7,7 @@ import AccountBalanceWalletOutlinedIcon from "@material-ui/icons/AccountBalanceW
 import CachedIcon from "@material-ui/icons/Cached";
 import HistoryIcon from "@material-ui/icons/History";
 import RemoveRedEyeOutlinedIcon from "@material-ui/icons/RemoveRedEyeOutlined";
+import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
 import React, { ReactElement, useEffect, useState } from "react";
 import {
   Redirect,
@@ -23,6 +24,7 @@ import NotFound from "../common/NotFound";
 import { SetupStatusResponse } from "../models/SetupStatusResponse";
 import { Status } from "../models/Status";
 import { Path } from "../router/Path";
+import Console from "./console/Console";
 import MenuItem, { MenuItemProps } from "./menu/MenuItem";
 import Overview from "./overview/Overview";
 import Tradehistory from "./tradehistory/Tradehistory";
@@ -49,6 +51,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: drawerWidth,
       backgroundColor: theme.palette.background.default,
       padding: theme.spacing(3),
+      height: "100vh",
     },
   })
 );
@@ -79,6 +82,12 @@ const Dashboard = (): ReactElement => {
       text: "Tradehistory",
       component: Tradehistory,
       icon: HistoryIcon,
+    },
+    {
+      path: Path.CONSOLE,
+      text: "Console",
+      component: Console,
+      icon: SportsEsportsIcon,
     },
   ];
 

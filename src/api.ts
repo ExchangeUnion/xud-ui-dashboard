@@ -1,4 +1,4 @@
-import { from, Observable } from "rxjs";
+import { from, fromEvent, Observable, of } from "rxjs";
 import { catchError, mergeMap } from "rxjs/operators";
 import { isElectron, sendMessageToParent } from "./common/appUtil";
 import { GetbalanceResponse } from "./models/GetbalanceResponse";
@@ -7,6 +7,7 @@ import { SetupStatusResponse } from "./models/SetupStatusResponse";
 import { Status } from "./models/Status";
 import { TradehistoryResponse } from "./models/TradehistoryResponse";
 import { TradinglimitsResponse } from "./models/TradinglimitsResponse";
+import io from "socket.io-client";
 
 const url =
   process.env.NODE_ENV === "development"
@@ -80,6 +81,13 @@ const fetchStreamResponse = <T>(url: string): Observable<T | null> => {
   });
 };
 
+const io$: Observable<SocketIOClient.Socket> = of(
+  io(url!, {
+    path: "/socket.io/",
+    transports: ["websocket"],
+  })
+);
+
 export default {
   setupStatus$(): Observable<SetupStatusResponse | null> {
     const requestUrl = `${path}/setup-status`;
@@ -116,5 +124,12 @@ export default {
 
   tradehistory$(): Observable<TradehistoryResponse> {
     return fetchJsonResponse(`${xudPath}/tradehistory`);
+  },
+
+  sio: {
+    io$,
+    console$(id: string): Observable<any> {
+      return io$.pipe(mergeMap((io) => fromEvent(io, `console.${id}.output`)));
+    },
   },
 };
