@@ -4,8 +4,8 @@ import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import "xterm/css/xterm.css";
 import api from "../../api";
-import { fromEvent, Subscription } from "rxjs";
-import { switchMap } from "rxjs/operators";
+import { combineLatest, fromEvent, Observable, Subscription } from "rxjs";
+import { mergeMap, shareReplay, switchMap, take } from "rxjs/operators";
 import {
   createStyles,
   Theme,
@@ -23,6 +23,7 @@ type PropsType = RouteComponentProps<{ param1: string }> &
 type StateType = {
   connected: boolean;
   id: string;
+  consoleCreated: boolean;
   error?: string;
 };
 
@@ -49,6 +50,17 @@ const styles = (theme: Theme) => {
   });
 };
 
+const consoleCreated$ = (api.sio.io$.pipe(
+  mergeMap((io) => fromEvent(io, "created")),
+  shareReplay(1)
+) as unknown) as Observable<string>;
+
+const consoleOutput$ = consoleCreated$.pipe(
+  mergeMap((id: string) => api.sio.console$(id))
+);
+
+const socket$ = combineLatest([consoleCreated$, api.sio.io$]);
+
 class Console extends Component<PropsType, StateType> {
   ref: React.RefObject<HTMLDivElement>;
 
@@ -56,9 +68,9 @@ class Console extends Component<PropsType, StateType> {
 
   socket!: SocketIOClient.Socket;
 
-  s3!: Subscription;
-
   fitAddon!: FitAddon;
+
+  sub: Subscription = new Subscription();
 
   resizeListener = () => {
     this.fitAddon.fit();
@@ -70,6 +82,7 @@ class Console extends Component<PropsType, StateType> {
     this.state = {
       connected: false,
       id: "?",
+      consoleCreated: false,
     };
 
     this.ref = React.createRef();
@@ -97,49 +110,82 @@ class Console extends Component<PropsType, StateType> {
   }
 
   componentDidMount() {
-    api.sio.io$
-      .pipe(switchMap((io) => fromEvent(io, "connect")))
-      .subscribe(() => {
-        this.setState({ ...this.state, connected: true });
-      });
-
-    api.sio.io$
-      .pipe(switchMap((io) => fromEvent(io, "disconnect")))
-      .subscribe(() => {
-        this.setState({ ...this.state, connected: false });
-      });
-
-    if (this.ref.current) {
-      this.term.open(this.ref.current);
-      this.fitAddon.fit();
-
-      api.createConsole$().subscribe(
-        (id) => {
-          this.setState({ ...this.state, id: id });
-          this.s3 = api.sio.console$(id).subscribe((data) => {
-            this.term.write(data);
-          });
-          api.sio.io$.subscribe((io) => {
-            console.log("io", "start", io);
-            const data = JSON.stringify({
-              id: id,
-              size: { rows: 25, cols: 80 },
-            });
-            io.emit("start", data);
-          });
-        },
-        (error) => {
-          this.setState({ ...this.state, error: error });
-        }
-      );
-    }
+    this.sub.add(this.addConnectionListener("connect"));
+    this.sub.add(this.addConnectionListener("disconnect"));
+    this.initializeTerminal();
     window.addEventListener("resize", this.resizeListener);
   }
 
   componentWillUnmount() {
-    this.s3 && this.s3.unsubscribe();
+    this.sub.unsubscribe();
     this.term.dispose();
     window.removeEventListener("resize", this.resizeListener);
+    api.sio.io$.pipe(take(1)).subscribe((io) => {
+      io.emit(
+        "stop",
+        JSON.stringify({
+          id: this.state.id,
+        })
+      );
+    });
+  }
+
+  private addConnectionListener(event: "connect" | "disconnect") {
+    this.sub.add(
+      api.sio.io$
+        .pipe(switchMap((io) => fromEvent(io, event)))
+        .subscribe(() => {
+          this.setState({ ...this.state, connected: event === "connect" });
+        })
+    );
+  }
+
+  private initializeTerminal() {
+    if (this.ref.current) {
+      this.term.open(this.ref.current);
+      this.fitAddon.fit();
+
+      this.createConsole();
+
+      this.sub.add(
+        consoleCreated$.subscribe((id) =>
+          this.setState({
+            ...this.state,
+            id: id as string,
+            consoleCreated: true,
+          })
+        )
+      );
+
+      this.sub.add(consoleOutput$.subscribe((data) => this.term.write(data)));
+
+      this.sub.add(
+        socket$.subscribe({
+          next: ([id, socket]) => this.startConsole(id, socket),
+          error: (error) => {
+            this.setState({ ...this.state, error: error });
+          },
+        })
+      );
+    }
+  }
+
+  private createConsole() {
+    this.sub.add(
+      api.sio.io$.subscribe((io) => {
+        if (!this.state.consoleCreated) {
+          io.emit("create");
+        }
+      })
+    );
+  }
+
+  private startConsole(id: string, socket: SocketIOClient.Socket) {
+    const data = JSON.stringify({
+      id,
+      size: { rows: 25, cols: 80 },
+    });
+    socket.emit("start", data);
   }
 
   private onData(data: string) {

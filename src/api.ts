@@ -1,5 +1,5 @@
 import { from, fromEvent, Observable, of } from "rxjs";
-import { catchError, map, mergeMap } from "rxjs/operators";
+import { catchError, mergeMap } from "rxjs/operators";
 import { isElectron, sendMessageToParent } from "./common/appUtil";
 import { GetbalanceResponse } from "./models/GetbalanceResponse";
 import { Info } from "./models/Info";
@@ -124,12 +124,6 @@ export default {
 
   tradehistory$(): Observable<TradehistoryResponse> {
     return fetchJsonResponse(`${xudPath}/tradehistory`);
-  },
-
-  createConsole$(): Observable<string> {
-    return from(fetch(`${path}/consoles`, { method: "POST" }))
-      .pipe(mergeMap((resp) => resp.json()))
-      .pipe(map((j) => j.id));
   },
 
   sio: {
