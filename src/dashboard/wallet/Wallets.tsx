@@ -4,7 +4,7 @@ import { withStyles } from "@material-ui/core/styles";
 import React, { ReactElement } from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { timer } from "rxjs";
-import { shareReplay, switchMap } from "rxjs/operators";
+import { exhaustMap, shareReplay } from "rxjs/operators";
 import api from "../../api";
 import PageCircularProgress from "../../common/PageCircularProgress";
 import { GetbalanceResponse } from "../../models/GetbalanceResponse";
@@ -31,13 +31,13 @@ const styles = () => {
 
 class Wallets extends DashboardContent<PropsType, StateType> {
   getInfo$ = timer(0, 60000).pipe(
-    switchMap(() => api.getinfo$()),
-    shareReplay(1)
+    exhaustMap(() => api.getinfo$()),
+    shareReplay({ refCount: true, bufferSize: 1 })
   );
 
   getBoltzStatus$ = timer(0, 5000).pipe(
-    switchMap(() => api.statusByService$("boltz")),
-    shareReplay(1)
+    exhaustMap(() => api.statusByService$("boltz")),
+    shareReplay({ refCount: true, bufferSize: 1 })
   );
 
   constructor(props: PropsType) {

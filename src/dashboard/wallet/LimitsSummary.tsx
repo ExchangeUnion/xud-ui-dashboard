@@ -32,7 +32,7 @@ const LimitsSummary = (props: LimitsSummaryProps): ReactElement => {
           !!hints.length && (
             <Tooltip
               title={hints.map((hint) => (
-                <div>{hint}</div>
+                <div key={hint}>{hint}</div>
               ))}
             >
               <InfoIcon fontSize="inherit" />

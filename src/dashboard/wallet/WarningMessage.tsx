@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
     warningMessage: {
       backgroundColor: theme.palette.warning.dark,
       color: theme.palette.warning.contrastText,
-      marginBottom: theme.spacing(3),
+      marginBottom: theme.spacing(2),
       padding: theme.spacing(1),
     },
     iconContainer: {

@@ -9,18 +9,23 @@ import {
 } from "@material-ui/core";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import React, { ReactElement, useState } from "react";
-import api from "../../api";
-import { getErrorMsg } from "../../common/errorUtil";
+import { satsToCoinsStr } from "../../common/currencyUtil";
+import { BOLTZ_ERROR_MESSAGES, getErrorMsg } from "../../common/errorUtil";
 import QrCode from "../../common/QrCode";
+import { Fees } from "../../models/BoltzFees";
+import { CreateReverseSwapResponse } from "../../models/CreateReverseSwapResponse";
 import { GetServiceInfoResponse } from "../../models/GetServiceInfoResponse";
 import Address from "./Address";
+import BoltzFeeInfo from "./BoltzFeeInfo";
 import ErrorMessage from "./ErrorMessage";
+import { withdraw } from "./walletUtil";
+import WarningMessage from "./WarningMessage";
 
 type WithdrawAddressProps = {
   currency: string;
   amount: number;
   serviceInfo: GetServiceInfoResponse;
-  onComplete: (address: string) => void;
+  onComplete: (address: string, id: string) => void;
   changeAmount: (address?: string) => void;
   currencyFullName?: string;
   initialAddress?: string;
@@ -32,7 +37,7 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: `${theme.spacing(2)}px 0px`,
     },
     buttonContainer: {
-      marginTop: theme.spacing(2),
+      marginTop: 1,
     },
     buttonWrapper: {
       margin: theme.spacing(1),
@@ -58,38 +63,81 @@ const WithdrawAddress = (props: WithdrawAddressProps): ReactElement => {
     changeAmount,
     initialAddress,
   } = props;
-  const [address, setAddress] = useState<string>(initialAddress || "");
+  const [address, setAddress] = useState(initialAddress || "");
+  const [fees, setFees] = useState(serviceInfo.fees);
   const [qrOpen, setQrOpen] = useState(false);
   const [withdrawing, setWithdrawing] = useState(false);
   const [error, setError] = useState("");
+  const [warning, setWarning] = useState("");
   const classes = useStyles();
+
+  const errorHandler = (err: any) => {
+    setWithdrawing(false);
+    const errorMsg = getErrorMsg(err);
+    setError(BOLTZ_ERROR_MESSAGES[errorMsg] || errorMsg);
+  };
+
+  const feesChangedHandler = {
+    next: (resp: Fees) => {
+      setFees(resp);
+      setWarning(
+        "Fees have changed. Please revisit the fees and confirm withdrawal."
+      );
+      setWithdrawing(false);
+    },
+    error: errorHandler,
+  };
+
+  const invalidAmountHandler = {
+    next: () => {
+      setError(
+        "Withdrawal cannot be completed with desired amount. Please see details and change the amount in the previous step."
+      );
+      setWithdrawing(false);
+    },
+    error: errorHandler,
+  };
+
+  const withdrawHandler = {
+    next: (resp: CreateReverseSwapResponse) => {
+      setWithdrawing(false);
+      onComplete(address!, resp.id);
+    },
+    error: errorHandler,
+  };
+
+  const handleWithdrawal = (): void => {
+    setWithdrawing(true);
+    setError("");
+    setWarning("");
+
+    withdraw(
+      currency,
+      amount,
+      address,
+      serviceInfo.fees,
+      feesChangedHandler,
+      invalidAmountHandler,
+      withdrawHandler
+    );
+  };
 
   return (
     <>
       {!qrOpen ? (
         <Grid item container justify="center" direction="column">
+          {!!warning && !error && <WarningMessage message={warning} />}
           <Typography variant="body2" align="center">
             Paste an on-chain {currencyFullName || currency} address to receive{" "}
-            {<strong>{amount} sats</strong>}
+            {<strong>{satsToCoinsStr(amount, currency)}</strong>}
           </Typography>
           <Address
             address={address}
-            openQr={() => setQrOpen(true)}
+            showQr={false}
             readOnly={false}
             setAddress={setAddress}
           />
-          <Grid item container direction="column" alignItems="center">
-            <Typography variant="body2">
-              Boltz swap fee:{" "}
-              <strong>
-                {(amount * serviceInfo.fees.percentage) / 100} sats (
-                {serviceInfo.fees.percentage}%)
-              </strong>
-            </Typography>
-            <Typography variant="body2">
-              Miner fee: <strong>{serviceInfo.fees.miner.normal} sats</strong>
-            </Typography>
-          </Grid>
+          <BoltzFeeInfo fees={fees} currency={currency} amount={amount} />
           <Grid
             item
             container
@@ -111,20 +159,7 @@ const WithdrawAddress = (props: WithdrawAddressProps): ReactElement => {
                 color="primary"
                 disableElevation
                 variant="contained"
-                onClick={() => {
-                  setWithdrawing(true);
-                  setError("");
-                  api.boltzWithdraw$(currency, { amount, address }).subscribe({
-                    next: () => {
-                      setWithdrawing(false);
-                      onComplete(address!);
-                    },
-                    error: (err) => {
-                      setWithdrawing(false);
-                      setError(getErrorMsg(err));
-                    },
-                  });
-                }}
+                onClick={handleWithdrawal}
                 disabled={!address || withdrawing}
               >
                 Confirm Withdraw

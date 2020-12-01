@@ -1,4 +1,4 @@
-import { OrderSide } from "../enums/OrderSide";
+import { OrderSide } from "../enums";
 import { NodeInfo } from "./NodeInfo";
 
 export type Order = {

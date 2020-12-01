@@ -15,6 +15,7 @@ import { RouteComponentProps, withRouter } from "react-router-dom";
 import api from "../../api";
 import { copyToClipboard } from "../../common/appUtil";
 import CenterEllipsis from "../../common/CenterEllipsis";
+import { satsToCoins } from "../../common/currencyUtil";
 import PageCircularProgress from "../../common/PageCircularProgress";
 import SortingOptions, {
   SortOption,
@@ -24,7 +25,7 @@ import {
   SortingOrder,
   stableSort,
 } from "../../common/sorting/SortingUtil";
-import { OrderRole } from "../../enums/OrderRole";
+import { OrderRole } from "../../enums";
 import { Trade } from "../../models/Trade";
 import { TradehistoryResponse } from "../../models/TradehistoryResponse";
 import DashboardContent, { DashboardContentState } from "../DashboardContent";
@@ -139,7 +140,7 @@ class Tradehistory extends DashboardContent<PropsType, StateType> {
       const order =
         trade.role === OrderRole.MAKER ? trade.maker_order : trade.taker_order;
       const [baseCurrency, quoteCurrency] = trade.pair_id.split("/");
-      const amount = Number(trade.quantity) / 10 ** 8;
+      const amount = satsToCoins(trade.quantity);
       return {
         swapHash: trade.r_hash,
         amountStr: `${amount.toFixed(8)} ${baseCurrency}`,

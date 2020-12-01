@@ -1,13 +1,22 @@
-import { Grid, Typography } from "@material-ui/core";
+import {
+  createStyles,
+  Grid,
+  makeStyles,
+  Theme,
+  Typography,
+} from "@material-ui/core";
 import React, { ReactElement, useEffect, useState } from "react";
 import { Observable, Subject } from "rxjs";
 import api from "../../api";
+import { satsToCoinsStr } from "../../common/currencyUtil";
 import { getErrorMsg } from "../../common/errorUtil";
 import Loader from "../../common/Loader";
 import QrCode from "../../common/QrCode";
 import { DepositResponse } from "../../models/DepositResponse";
 import { Info } from "../../models/Info";
 import Address from "./Address";
+import BoltzFeeInfo from "./BoltzFeeInfo";
+import CheckBoltzTransactionStatus from "./CheckBoltzTransactionStatus";
 import ErrorMessage from "./ErrorMessage";
 import WarningMessage from "./WarningMessage";
 
@@ -16,6 +25,14 @@ type DepositProps = {
   refreshSubject: Subject<void>;
   getInfo$: Observable<Info>;
 };
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    row: {
+      paddingTop: theme.spacing(2),
+    },
+  })
+);
 
 const getAvgMinutesBetweenBlocks = (
   start: number,
@@ -42,6 +59,8 @@ const getTimeString = (minutes: number): string => {
 
 const Deposit = (props: DepositProps): ReactElement => {
   const { currency, refreshSubject, getInfo$ } = props;
+  const classes = useStyles();
+
   const [depositData, setDepositData] = useState<DepositResponse | undefined>(
     undefined
   );
@@ -100,9 +119,9 @@ const Deposit = (props: DepositProps): ReactElement => {
           {!qrOpen ? (
             <Grid item>
               <Typography variant="body2" align="center">
-                Deposit between {depositData.limits.minimal} and{" "}
-                {depositData.limits.maximal} sats in the following address in
-                the next ~
+                Deposit between {satsToCoinsStr(depositData.limits.minimal)} and{" "}
+                {satsToCoinsStr(depositData.limits.maximal, currency)} in the
+                following address in the next ~
                 {getTimeString(
                   getAvgMinutesBetweenBlocks(
                     currentBlockHeight,
@@ -117,16 +136,13 @@ const Deposit = (props: DepositProps): ReactElement => {
                 openQr={() => setQrOpen(true)}
                 readOnly={true}
               />
-              <Grid item container direction="column" alignItems="center">
-                <Typography variant="body2">
-                  Boltz swap fee:{" "}
-                  <strong>{depositData.fees.percentage}%</strong>
-                </Typography>
-                <Typography variant="body2">
-                  Miner fee:{" "}
-                  <strong>{depositData.fees.miner.normal} sats</strong>
-                </Typography>
-              </Grid>
+              <BoltzFeeInfo fees={depositData.fees} currency={currency} />
+              <div className={classes.row}>
+                <CheckBoltzTransactionStatus
+                  currency={currency}
+                  id={depositData.id}
+                />
+              </div>
             </Grid>
           ) : (
             <Grid item>

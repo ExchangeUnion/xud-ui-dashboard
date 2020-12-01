@@ -12,6 +12,7 @@ import WithdrawAmount from "./WithdrawAmount";
 
 type WithdrawProps = {
   currency: string;
+  channelBalance: number;
   onClose: () => void;
 };
 
@@ -27,11 +28,12 @@ enum WithdrawViewType {
 }
 
 const Withdraw = (props: WithdrawProps): ReactElement => {
-  const { currency, onClose } = props;
+  const { currency, channelBalance, onClose } = props;
   const [fetchingData, setFetchingData] = useState(true);
   const [error, setError] = useState("");
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmountInSats] = useState(0);
   const [address, setAddress] = useState("");
+  const [swapId, setSwapId] = useState("");
   const [activeViewType, setActiveViewType] = useState(WithdrawViewType.AMOUNT);
   const [serviceInfo, setServiceInfo] = useState<
     GetServiceInfoResponse | undefined
@@ -43,12 +45,13 @@ const Withdraw = (props: WithdrawProps): ReactElement => {
       component: (
         <WithdrawAmount
           currency={currency}
+          channelBalance={channelBalance}
           serviceInfo={serviceInfo!}
           onNext={(amount) => {
-            setAmount(amount);
+            setAmountInSats(amount);
             setActiveViewType(WithdrawViewType.ADDRESS);
           }}
-          initialAmount={amount}
+          initialAmountInSats={amount}
         />
       ),
     },
@@ -59,8 +62,9 @@ const Withdraw = (props: WithdrawProps): ReactElement => {
           currency={currency}
           amount={amount}
           serviceInfo={serviceInfo!}
-          onComplete={(address) => {
+          onComplete={(address, id) => {
             setAddress(address);
+            setSwapId(id);
             setActiveViewType(WithdrawViewType.COMPLETE);
           }}
           changeAmount={(address) => {
@@ -78,6 +82,8 @@ const Withdraw = (props: WithdrawProps): ReactElement => {
         <WithdrawalComplete
           amount={amount}
           address={address}
+          currency={currency}
+          swapId={swapId}
           onClose={onClose}
         />
       ),

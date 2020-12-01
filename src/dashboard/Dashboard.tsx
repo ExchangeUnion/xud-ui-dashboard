@@ -1,4 +1,4 @@
-import { Button, Grid, Typography } from "@material-ui/core";
+import { Button, Grid, Tooltip, Typography } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
@@ -170,16 +170,17 @@ const Dashboard = (): ReactElement => {
           </List>
         </Grid>
         {isElectron() && (
-          <Button
-            size="small"
-            startIcon={<CachedIcon />}
-            variant="outlined"
-            title="Disconnect from xud-docker"
-            className={classes.drawerButton}
-            onClick={disconnect}
-          >
-            Disconnect
-          </Button>
+          <Tooltip title="Disconnect from xud-docker">
+            <Button
+              size="small"
+              startIcon={<CachedIcon />}
+              variant="outlined"
+              className={classes.drawerButton}
+              onClick={disconnect}
+            >
+              Disconnect
+            </Button>
+          </Tooltip>
         )}
       </Drawer>
       <main className={classes.content}>

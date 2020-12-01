@@ -52,7 +52,7 @@ const styles = (theme: Theme) => {
 
 const consoleCreated$ = (api.sio.io$.pipe(
   mergeMap((io) => fromEvent(io, "created")),
-  shareReplay(1)
+  shareReplay({ refCount: true, bufferSize: 1 })
 ) as unknown) as Observable<string>;
 
 const consoleOutput$ = consoleCreated$.pipe(
