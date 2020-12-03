@@ -8,6 +8,7 @@ import {
 import ReportProblemOutlinedIcon from "@material-ui/icons/ReportProblemOutlined";
 import React, { ReactElement } from "react";
 import { DashboardContentState } from "./DashboardContent";
+import UnlockXud from "./UnlockXud";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -42,13 +43,15 @@ function ViewDisabled(props: DashboardContentState): ReactElement {
         </Grid>
       </Grid>
       <Grid container item justify="center" className={classes.row}>
-        <Grid item>
-          <Typography variant="h6" component="h2">
-            {xudLocked
-              ? 'Please unlock via "unlock" in xud ctl to view this page.'
-              : xudStatus || ""}
-          </Typography>
-        </Grid>
+        {xudLocked ? (
+          <UnlockXud />
+        ) : (
+          <Grid item>
+            <Typography variant="h6" component="h2">
+              {xudStatus || ""}
+            </Typography>
+          </Grid>
+        )}
       </Grid>
     </Grid>
   );

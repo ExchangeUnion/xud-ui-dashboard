@@ -1,6 +1,5 @@
 import {
   Button,
-  CircularProgress,
   createStyles,
   Grid,
   makeStyles,
@@ -11,6 +10,7 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import React, { ReactElement, useState } from "react";
 import { satsToCoinsStr } from "../../common/currencyUtil";
 import { BOLTZ_ERROR_MESSAGES, getErrorMsg } from "../../common/errorUtil";
+import ButtonWithLoading from "../../common/ButtonWithLoading";
 import QrCode from "../../common/QrCode";
 import { Fees } from "../../models/BoltzFees";
 import { CreateReverseSwapResponse } from "../../models/CreateReverseSwapResponse";
@@ -38,17 +38,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     buttonContainer: {
       marginTop: 1,
-    },
-    buttonWrapper: {
-      margin: theme.spacing(1),
-      position: "relative",
-    },
-    buttonProgress: {
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      marginTop: -12,
-      marginLeft: -12,
     },
   })
 );
@@ -145,7 +134,7 @@ const WithdrawAddress = (props: WithdrawAddressProps): ReactElement => {
             spacing={4}
             className={classes.buttonContainer}
           >
-            <Grid item className={classes.buttonWrapper}>
+            <Grid item>
               <Button
                 startIcon={<ArrowBackIcon />}
                 variant="outlined"
@@ -154,22 +143,13 @@ const WithdrawAddress = (props: WithdrawAddressProps): ReactElement => {
                 Change Amount
               </Button>
             </Grid>
-            <Grid item className={classes.buttonWrapper}>
-              <Button
-                color="primary"
-                disableElevation
-                variant="contained"
-                onClick={handleWithdrawal}
+            <Grid item>
+              <ButtonWithLoading
+                text="Confirm Withdraw"
                 disabled={!address || withdrawing}
-              >
-                Confirm Withdraw
-              </Button>
-              {withdrawing && (
-                <CircularProgress
-                  size={24}
-                  className={classes.buttonProgress}
-                />
-              )}
+                loading={withdrawing}
+                onClick={handleWithdrawal}
+              />
             </Grid>
           </Grid>
           {!!error && (

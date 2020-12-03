@@ -163,6 +163,14 @@ export default {
     );
   },
 
+  unlock$(password: string): Observable<void> {
+    return fetchJsonResponse(
+      `${xudPath}/unlock`,
+      JSON.stringify({ password }),
+      "POST"
+    );
+  },
+
   sio: {
     io$,
     console$(id: string): Observable<any> {
