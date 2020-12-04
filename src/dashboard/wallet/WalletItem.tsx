@@ -13,7 +13,6 @@ import { Status } from "../../models/Status";
 import { TradingLimits } from "../../models/TradingLimits";
 import BalanceSummary from "./BalanceSummary";
 import Deposit from "./Deposit";
-import InfoMessage from "./InfoMessage";
 import LimitsSummary from "./LimitsSummary";
 import WalletItemHeader from "./WalletItemHeader";
 import WalletTransactionButton from "./WalletTransactionButton";
@@ -44,6 +43,8 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     card: {
       height: "100%",
+      minHeight: 446,
+      minWidth: 514,
     },
     cardContent: {
       padding: theme.spacing(3),
@@ -76,7 +77,7 @@ const WalletItem = (props: WalletItemProps): ReactElement => {
     Subject<void> | undefined
   >(undefined);
   const [transactionsDisabledCause, setTransactionsDisabledCause] = useState(
-    ""
+    "Waiting for Boltz status"
   );
 
   const isActive = (...type: WalletItemViewType[]): boolean =>
@@ -98,16 +99,18 @@ const WalletItem = (props: WalletItemProps): ReactElement => {
         mergeMap(() => getBoltzStatus$)
       )
       .subscribe({
-        next: (status) =>
+        next: (status) => {
           setTransactionsDisabledCause(
             isServiceReady(status)
               ? ""
               : `Boltz is not ready. Status: ${status.status}`
-          ),
-        error: (err) =>
+          );
+        },
+        error: (err) => {
           setTransactionsDisabledCause(
             `Boltz is unavailable. Error: ${getErrorMsg(err)}`
-          ),
+          );
+        },
       });
     return () => sub.unsubscribe();
   }, [getInfo$, getBoltzStatus$, currency]);
@@ -138,6 +141,7 @@ const WalletItem = (props: WalletItemProps): ReactElement => {
       component: (
         <Withdraw
           currency={currency}
+          channelBalance={Number(balance.channel_balance)}
           onClose={() => setActiveViewType(WalletItemViewType.BALANCE)}
         />
       ),
@@ -150,7 +154,7 @@ const WalletItem = (props: WalletItemProps): ReactElement => {
   }, []);
 
   return (
-    <Grid item xs={12} md={6} xl={4}>
+    <Grid item xs={12} lg={6} xl={4}>
       <Card className={classes.card}>
         <CardContent className={classes.cardContent}>
           <WalletItemHeader
@@ -223,14 +227,6 @@ const WalletItem = (props: WalletItemProps): ReactElement => {
                   />
                 </Grid>
               )}
-            {isActive(
-              WalletItemViewType.DEPOSIT,
-              WalletItemViewType.WITHDRAW
-            ) && (
-              <Grid item container>
-                <InfoMessage message="Check detailed status in the console tab" />
-              </Grid>
-            )}
           </Grid>
         </CardContent>
       </Card>

@@ -17,10 +17,10 @@ const ErrorMessage = (props: ErrorMessageProps): ReactElement => {
       justify="center"
       alignItems="center"
     >
-      <Typography variant="body1" color="error">
+      <Typography variant="body1" color="error" align="center">
         {mainMessage || "Failed to fetch data"}
       </Typography>
-      <Typography variant="body2" color="textSecondary">
+      <Typography variant="body2" color="textSecondary" align="center">
         {details}
       </Typography>
     </Grid>

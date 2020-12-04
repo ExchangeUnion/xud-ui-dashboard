@@ -11,6 +11,14 @@ export const copyToClipboard = (value: string | number): void => {
   navigator.clipboard.writeText(value.toString());
 };
 
+export const openLink = (url: string): void => {
+  if (isElectron()) {
+    sendMessageToParent(`openLink: ${url}`);
+    return;
+  }
+  window.open(url, "_blank", "noopener");
+};
+
 export const sendMessageToParent = (message: string): void => {
   window.parent.postMessage(message, "*");
 };

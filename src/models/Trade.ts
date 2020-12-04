@@ -1,5 +1,5 @@
-import { OrderRole } from "../enums/OrderRole";
-import { OrderSide } from "../enums/OrderSide";
+import { OrderRole } from "../enums";
+import { OrderSide } from "../enums";
 import { NodeInfo } from "./NodeInfo";
 import { Order } from "./Order";
 

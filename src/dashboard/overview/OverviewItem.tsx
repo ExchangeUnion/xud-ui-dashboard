@@ -8,6 +8,7 @@ import {
   Snackbar,
   SnackbarContent,
   Theme,
+  Tooltip,
 } from "@material-ui/core";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -121,13 +122,11 @@ const OverviewItem = (props: OverviewItemProps): ReactElement => {
         >
           <Grid container item>
             {isDetailsIconVisible(status) && (
-              <IconButton
-                size="small"
-                title="details"
-                onClick={() => setDetailsOpen(true)}
-              >
-                <Icon fontSize="small">open_in_full</Icon>
-              </IconButton>
+              <Tooltip title="details">
+                <IconButton size="small" onClick={() => setDetailsOpen(true)}>
+                  <Icon fontSize="small">open_in_full</Icon>
+                </IconButton>
+              </Tooltip>
             )}
           </Grid>
           <Grid
@@ -144,16 +143,17 @@ const OverviewItem = (props: OverviewItemProps): ReactElement => {
           </Grid>
           <Grid container item justify="flex-end">
             {isDownloadLogsEnabled(status) && (
-              <Button
-                size="small"
-                title="Download logs"
-                startIcon={<GetAppOutlinedIcon fontSize="small" />}
-                onClick={() =>
-                  downloadLogs(status.service, () => setErrorMsgOpen(true))
-                }
-              >
-                Logs
-              </Button>
+              <Tooltip title="Download logs">
+                <Button
+                  size="small"
+                  startIcon={<GetAppOutlinedIcon fontSize="small" />}
+                  onClick={() =>
+                    downloadLogs(status.service, () => setErrorMsgOpen(true))
+                  }
+                >
+                  Logs
+                </Button>
+              </Tooltip>
             )}
           </Grid>
         </Grid>

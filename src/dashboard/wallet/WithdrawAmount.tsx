@@ -11,13 +11,21 @@ import {
 } from "@material-ui/core";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import React, { ReactElement, useEffect, useState } from "react";
+import {
+  coinsToSats,
+  satsToCoins,
+  satsToCoinsStr,
+} from "../../common/currencyUtil";
+import NumberInput from "../../common/NumberInput";
 import { GetServiceInfoResponse } from "../../models/GetServiceInfoResponse";
+import { getMaxWithdrawAmount, isAmountBetweenLimits } from "./walletUtil";
 
 type WithdrawAmountProps = {
   currency: string;
+  channelBalance: number;
   serviceInfo: GetServiceInfoResponse;
   onNext: (amount: number) => void;
-  initialAmount?: number;
+  initialAmountInSats?: number;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -29,14 +37,22 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const WithdrawAmount = (props: WithdrawAmountProps): ReactElement => {
-  const { currency, serviceInfo, onNext, initialAmount } = props;
-  const [amount, setAmount] = useState<number | undefined>(undefined);
+  const {
+    currency,
+    channelBalance,
+    serviceInfo,
+    onNext,
+    initialAmountInSats,
+  } = props;
+  const [amount, setAmount] = useState<string>("");
   const inputId = `withdraw-${currency}-amount`;
   const classes = useStyles();
 
   useEffect(() => {
-    setAmount(initialAmount);
-  }, [initialAmount]);
+    setAmount(
+      initialAmountInSats ? satsToCoins(initialAmountInSats).toString() : ""
+    );
+  }, [initialAmountInSats]);
 
   return (
     <>
@@ -47,32 +63,57 @@ const WithdrawAmount = (props: WithdrawAmountProps): ReactElement => {
           labelWidth={60}
           value={amount || ""}
           onChange={(event) => {
-            event.preventDefault();
-            const numberValue = Number.parseInt(
-              event.target.value.replace(/[^0-9]/g, "")
-            );
-            const newValue = Number.isNaN(numberValue)
-              ? undefined
-              : numberValue;
-            setAmount(newValue);
+            setAmount(event.target.value);
           }}
-          endAdornment={<InputAdornment position="end">sats</InputAdornment>}
+          inputComponent={NumberInput as any}
+          inputProps={{ decimalScale: 8 }}
+          endAdornment={
+            <InputAdornment position="end">{currency}</InputAdornment>
+          }
         />
       </FormControl>
-      <Typography className={classes.row} variant="body2">
-        Range: {<strong>{serviceInfo.limits.minimal}</strong>} to{" "}
-        {<strong>{serviceInfo.limits.maximal}</strong>} sats
-      </Typography>
+
+      {channelBalance < Number(serviceInfo.limits.minimal) ? (
+        <Typography
+          className={classes.row}
+          variant="body2"
+          color="error"
+          align="center"
+        >
+          Minimal withdrawal amount is{" "}
+          <strong>
+            {satsToCoinsStr(serviceInfo.limits.minimal, currency)}
+          </strong>
+          , your Layer 2 balance is{" "}
+          <strong>{satsToCoinsStr(channelBalance, currency)}</strong>
+        </Typography>
+      ) : (
+        <Typography className={classes.row} variant="body2" align="center">
+          Range: {<strong>{satsToCoinsStr(serviceInfo.limits.minimal)}</strong>}{" "}
+          to{" "}
+          {
+            <strong>
+              {satsToCoinsStr(
+                getMaxWithdrawAmount(channelBalance, serviceInfo.limits),
+                currency
+              )}
+            </strong>
+          }
+        </Typography>
+      )}
       <Button
         endIcon={<ArrowForwardIcon />}
         color="primary"
         disableElevation
         variant="contained"
-        onClick={() => onNext(amount!)}
+        onClick={() => onNext(coinsToSats(amount))}
         disabled={
-          !amount ||
-          amount < Number.parseInt(serviceInfo.limits.minimal) ||
-          amount > Number.parseInt(serviceInfo.limits.maximal)
+          isNaN(Number.parseFloat(amount)) ||
+          !isAmountBetweenLimits(
+            coinsToSats(amount),
+            channelBalance,
+            serviceInfo.limits
+          )
         }
       >
         Next

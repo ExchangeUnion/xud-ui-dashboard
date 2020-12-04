@@ -1,5 +1,4 @@
 import {
-  Button,
   createStyles,
   Grid,
   Icon,
@@ -8,6 +7,7 @@ import {
   makeStyles,
   OutlinedInput,
   Theme,
+  Tooltip,
 } from "@material-ui/core";
 import FileCopyOutlinedIcon from "@material-ui/icons/FileCopyOutlined";
 import React, { ReactElement } from "react";
@@ -16,14 +16,15 @@ import { copyToClipboard } from "../../common/appUtil";
 type AddressProps = {
   address: string;
   setAddress?: (address: string) => void;
-  openQr: () => void;
+  showQr?: boolean;
+  openQr?: () => void;
   readOnly: boolean;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     addressContainer: {
-      margin: `${theme.spacing(3)}px 0px`,
+      margin: `${theme.spacing(2)}px 0px`,
     },
     addressField: {
       marginBottom: theme.spacing(2),
@@ -43,7 +44,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const Address = (props: AddressProps): ReactElement => {
-  const { address, setAddress, openQr, readOnly } = props;
+  const { address, setAddress, showQr, openQr, readOnly } = props;
   const classes = useStyles();
 
   const addressFieldClass = readOnly
@@ -68,24 +69,23 @@ const Address = (props: AddressProps): ReactElement => {
         }
         endAdornment={
           <InputAdornment position="end">
-            <IconButton onClick={() => copyToClipboard(address)}>
-              {<FileCopyOutlinedIcon fontSize="small" />}
-            </IconButton>
+            <div>
+              <Tooltip title="Copy Address">
+                <IconButton onClick={() => copyToClipboard(address)}>
+                  {<FileCopyOutlinedIcon fontSize="small" />}
+                </IconButton>
+              </Tooltip>
+              {showQr !== false && (
+                <Tooltip title="Show QR">
+                  <IconButton onClick={openQr}>
+                    {<Icon fontSize="small">qr_code</Icon>}
+                  </IconButton>
+                </Tooltip>
+              )}
+            </div>
           </InputAdornment>
         }
       />
-      <Grid item container justify="center">
-        <Button
-          size="small"
-          variant="contained"
-          disableElevation
-          onClick={openQr}
-          className={classes.qrButton}
-          endIcon={<Icon fontSize="small">qr_code</Icon>}
-        >
-          Show QR
-        </Button>
-      </Grid>
     </Grid>
   );
 };

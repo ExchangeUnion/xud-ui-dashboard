@@ -45,7 +45,7 @@ const QrCode = (props: QrCodeProps): ReactElement => {
       </Grid>
       <Grid item container justify="center" alignItems="center">
         <Typography component="div" align="center">
-          <QRCode value={value} size={size || 200}></QRCode>
+          <QRCode value={value} size={size || 150}></QRCode>
         </Typography>
       </Grid>
     </Paper>
