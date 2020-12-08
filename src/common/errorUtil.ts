@@ -14,3 +14,11 @@ export const BOLTZ_ERROR_MESSAGES: { [error: string]: string } = {
   "rpc error: code = Unknown desc = decoded address is of unknown format":
     "Unknown address format",
 };
+
+/**
+ * Maps xud errors to user-friendly messages
+ */
+export const XUD_ERROR_MESSAGES: { [error: string]: string } = {
+  "rpc error: code = InvalidArgument desc = password is incorrect":
+    "Incorrect password",
+};
