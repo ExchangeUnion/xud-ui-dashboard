@@ -9,6 +9,7 @@ export const XUD_NOT_READY = [
   "Container exited",
   "Container missing",
   "Starting",
+  "Waiting for sync",
 ];
 
 export const SERVICES_WITH_ADDITIONAL_INFO = [
