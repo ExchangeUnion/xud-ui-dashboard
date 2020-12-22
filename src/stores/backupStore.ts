@@ -2,7 +2,7 @@ import { observable } from "mobx";
 import { BackupInfo } from "../models/BackupInfo";
 
 export type Details = {
-  backupInfoLoaded?: boolean;
+  backupInfoLoaded: boolean;
   defaultPassword?: boolean;
   mnemonicShown?: boolean;
   defaultBackupDirectory?: boolean;
@@ -24,7 +24,7 @@ export const useBackupStore = (defaultDetails: Details) => {
       store.details.defaultBackupDirectory = value.backup.defaultLocation;
       store.details.backupDirectory = value.backup.location;
     },
-    get backupInfoLoaded(): boolean | undefined {
+    get backupInfoLoaded(): boolean {
       return store.details.backupInfoLoaded;
     },
     get backupDirectory(): string | undefined {

@@ -51,7 +51,7 @@ const GlobalCss = withStyles((theme: Theme) => {
 })(() => null);
 
 const electronStore = useElectronStore({});
-const backupStore = useBackupStore({});
+const backupStore = useBackupStore({ backupInfoLoaded: false });
 
 function App(): ReactElement {
   useEffect(() => {

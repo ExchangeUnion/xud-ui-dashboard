@@ -18,7 +18,6 @@ type StateType = DashboardContentState & {
 const styles = () => {
   return createStyles({
     wrapper: {
-      flex: 1,
       overflowY: "auto",
     },
   });
