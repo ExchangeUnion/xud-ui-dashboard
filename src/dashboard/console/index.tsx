@@ -6,48 +6,22 @@ import "xterm/css/xterm.css";
 import api from "../../api";
 import { combineLatest, fromEvent, Observable, Subscription } from "rxjs";
 import { mergeMap, shareReplay, switchMap, take } from "rxjs/operators";
-import {
-  createStyles,
-  Theme,
-  Typography,
-  withStyles,
-  WithStyles,
-} from "@material-ui/core";
 
-type PropsType = RouteComponentProps<{ param1: string }> &
-  WithStyles<typeof styles> & {
-    previousTerminal?: Terminal;
-    setTerminal: (terminal: Terminal) => void;
-  };
+//styles
+import { 
+  Wrapper,
+  Title,
+  Code,
+  TerminalContainer
+} from './styles';
+
+type PropsType = RouteComponentProps<{ param1: string }>
 
 type StateType = {
   connected: boolean;
   id: string;
   consoleCreated: boolean;
   error?: string;
-};
-
-const styles = (theme: Theme) => {
-  return createStyles({
-    wrapper: {
-      height: "90%",
-    },
-    title: {
-      marginBottom: theme.spacing(2),
-    },
-    code: {
-      backgroundColor: theme.palette.background.paper,
-      padding: `0px ${theme.spacing(1)}px`,
-      borderRadius: 5,
-      letterSpacing: 2,
-      fontFamily: "monospace",
-    },
-    terminalContainer: {
-      height: "100%",
-      width: "100%",
-      overflowY: "auto",
-    },
-  });
 };
 
 const consoleCreated$ = (api.sio.io$.pipe(
@@ -208,21 +182,19 @@ class Console extends Component<PropsType, StateType> {
   }
 
   render(): ReactElement {
-    const { classes } = this.props;
-
     return (
-      <div className={classes.wrapper}>
-        <Typography component="p" variant="body2" className={classes.title}>
-          Type {<span className={classes.code}>help</span>} to show a list of
+      <Wrapper>
+        <Title component="p" variant="body2">
+          Type {<Code>help</Code>} to show a list of
           available commands
-        </Typography>
+        </Title>
         {this.state.error && (
           <div>Error: {JSON.stringify(this.state.error)}</div>
         )}
-        <div className={classes.terminalContainer} ref={this.ref} />
-      </div>
+        <TerminalContainer ref={this.ref} />
+      </Wrapper>
     );
   }
 }
 
-export default withRouter(withStyles(styles, { withTheme: true })(Console));
+export default withRouter(Console);
