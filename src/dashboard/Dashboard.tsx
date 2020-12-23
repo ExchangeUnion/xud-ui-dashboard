@@ -24,9 +24,9 @@ import NotFound from "../common/NotFound";
 import { SetupStatusResponse } from "../models/SetupStatusResponse";
 import { Status } from "../models/Status";
 import { Path } from "../router/Path";
-import Console from "./console/Console";
-import MenuItem, { MenuItemProps } from "./menu/MenuItem";
-import Overview from "./overview/Overview";
+import Console from "./console";
+import MenuItem, { MenuItemProps } from "./menu/menuItem";
+import Overview from "./overview";
 import Tradehistory from "./tradehistory/Tradehistory";
 import Wallets from "./wallet/Wallets";
 

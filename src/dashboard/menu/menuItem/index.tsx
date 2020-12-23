@@ -1,15 +1,14 @@
 import {
   ListItemIcon,
-  Tooltip,
-  Theme,
-  createStyles,
-  makeStyles,
+  Tooltip
 } from "@material-ui/core";
-import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import React, { ComponentClass, ElementType, ReactElement } from "react";
 import { NavLink, useLocation, useRouteMatch } from "react-router-dom";
-import { Path } from "../../router/Path";
+import { Path } from "../../../router/Path";
+
+//styles
+import { ListItem } from './styles';
 
 export type MenuItemProps = {
   path: Path;
@@ -21,18 +20,9 @@ export type MenuItemProps = {
   tooltipTextRows?: string[];
 };
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    disabled: {
-      color: theme.palette.text.disabled,
-    },
-  })
-);
-
 function MenuItem(props: MenuItemProps): ReactElement {
   const { url } = useRouteMatch();
   const { pathname } = useLocation();
-  const classes = useStyles();
   const navigateTo = `${url}${props.path}`;
 
   const isCurrentLocation = (): boolean => {
@@ -49,7 +39,7 @@ function MenuItem(props: MenuItemProps): ReactElement {
       }
     >
       <ListItem
-        className={props.isDisabled ? classes.disabled : ""}
+        isDisabled={props.isDisabled}
         button={!props.isDisabled as any}
         component={props.isDisabled ? "div" : NavLink}
         to={navigateTo}

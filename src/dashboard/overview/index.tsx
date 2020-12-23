@@ -5,7 +5,7 @@ import api from "../../api";
 import PageCircularProgress from "../../common/PageCircularProgress";
 import { Status } from "../../models/Status";
 import DashboardContent, { DashboardContentState } from "../DashboardContent";
-import OverviewItem from "./OverviewItem";
+import OverviewItem from "./overviewItem";
 
 type PropsType = RouteComponentProps<{ param1: string }>;
 
