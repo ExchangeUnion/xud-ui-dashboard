@@ -1,23 +1,27 @@
 import {
-  Button,
   ClickAwayListener,
-  createStyles,
   Fade,
   Grid,
   IconButton,
-  makeStyles,
-  Paper,
   Popper,
-  Theme,
   Tooltip,
-  Typography,
+  Typography
 } from "@material-ui/core";
-import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
-import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import CloseIcon from "@material-ui/icons/Close";
 import SortIcon from "@material-ui/icons/Sort";
 import React, { ReactElement, useState } from "react";
-import { SortingOrder } from "./SortingUtil";
+import { SortingOrder } from "../SortingUtil";
+
+//styles
+import {
+  SortIconContainer,
+  SortOptionsMenu,
+  SortOptionButton,
+  SortOptionActiveGrid,
+  SortDirIconContainer,
+  StyledArrowDownwardIcon,
+  StyledArrowUpwardIcon
+} from './styles';
 
 export type SortingOptionsProps<T> = {
   sortOpts: SortOption<T>[];
@@ -33,36 +37,7 @@ export type SortOption<T> = {
   sortingOrder?: SortingOrder;
 };
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    sortIconContainer: {
-      paddingRight: theme.spacing(2),
-      paddingTop: theme.spacing(2),
-    },
-    sortOptionsMenu: {
-      backgroundColor: theme.palette.background.default,
-    },
-    sortOption: {
-      padding: `${theme.spacing(1)}px ${theme.spacing(3)}px`,
-      textTransform: "none",
-      borderRadius: 0,
-      color: theme.palette.text.secondary,
-    },
-    sortOptionActive: {
-      fontWeight: theme.typography.fontWeightBold,
-      color: theme.palette.text.primary,
-    },
-    sortDirIconContainer: {
-      width: "15px",
-    },
-    sortDirIcon: {
-      fontSize: theme.typography.body2.fontSize,
-    },
-  })
-);
-
 function SortingOptions<T>(props: SortingOptionsProps<T>): ReactElement {
-  const classes = useStyles();
   const { sortOpts, orderBy, sortingOrder, onOptionSelected } = props;
   const [sortOptsOpen, setSortOptsOpen] = useState(false);
   const [sortOptsAnchorEl, setSortOptsAnchorEl] = useState<HTMLElement | null>(
@@ -88,18 +63,17 @@ function SortingOptions<T>(props: SortingOptionsProps<T>): ReactElement {
       return null;
     }
     return sortingOrder === "desc" ? (
-      <ArrowDownwardIcon className={classes.sortDirIcon} />
+      <StyledArrowDownwardIcon />
     ) : (
-      <ArrowUpwardIcon className={classes.sortDirIcon} />
+      <StyledArrowUpwardIcon />
     );
   };
 
   return (
-    <Grid
+    <SortIconContainer
       item
       container
       justify="flex-end"
-      className={classes.sortIconContainer}
     >
       <ClickAwayListener onClickAway={closeSortOptions}>
         <div>
@@ -116,10 +90,10 @@ function SortingOptions<T>(props: SortingOptionsProps<T>): ReactElement {
           >
             {({ TransitionProps }) => (
               <Fade {...TransitionProps} timeout={350}>
-                <Paper className={classes.sortOptionsMenu}>
+                <SortOptionsMenu>
                   <Grid container direction="column">
                     {sortOpts.map((opt) => (
-                      <Button
+                      <SortOptionButton
                         fullWidth
                         disableRipple
                         size="small"
@@ -127,45 +101,39 @@ function SortingOptions<T>(props: SortingOptionsProps<T>): ReactElement {
                           onOptionSelected(opt);
                           closeSortOptions();
                         }}
-                        className={classes.sortOption}
                         key={opt.label as string}
                       >
-                        <Grid
+                        <SortOptionActiveGrid
                           item
                           container
                           alignItems="center"
                           spacing={1}
                           wrap="nowrap"
-                          className={`${
-                            orderBy.label === opt.label
-                              ? classes.sortOptionActive
-                              : ""
-                          }`}
+                          sortOptionActive={orderBy.label === opt.label}
                         >
                           <Grid item>
-                            <Typography
+                            <SortDirIconContainer
                               component="div"
-                              className={classes.sortDirIconContainer}
                             >
                               {getSortingDirIcon(opt)}
-                            </Typography>
+                            </SortDirIconContainer>
                           </Grid>
                           <Grid item>
                             <Typography component="div" variant="caption">
                               {opt.label}
                             </Typography>
                           </Grid>
-                        </Grid>
-                      </Button>
+                        </SortOptionActiveGrid>
+                      </SortOptionButton>
                     ))}
                   </Grid>
-                </Paper>
+                </SortOptionsMenu>
               </Fade>
             )}
           </Popper>
         </div>
       </ClickAwayListener>
-    </Grid>
+    </SortIconContainer>
   );
 }
 
