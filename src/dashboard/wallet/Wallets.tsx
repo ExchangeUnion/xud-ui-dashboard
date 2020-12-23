@@ -24,7 +24,8 @@ type StateType = DashboardContentState & {
 const styles = () => {
   return createStyles({
     itemsContainer: {
-      paddingBottom: "45px",
+      flex: 1,
+      overflowY: "auto",
     },
   });
 };
@@ -61,7 +62,7 @@ class Wallets extends DashboardContent<PropsType, StateType> {
     const { classes } = this.props;
 
     return (
-      <>
+      <Grid container direction="column">
         {this.state.xudLocked || this.state.xudNotReady ? (
           <ViewDisabled
             xudLocked={this.state.xudLocked}
@@ -89,7 +90,7 @@ class Wallets extends DashboardContent<PropsType, StateType> {
             )}
           </Grid>
         )}
-      </>
+      </Grid>
     );
   }
 }

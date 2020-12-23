@@ -1,5 +1,4 @@
 import { OrderRole } from "../enums";
-import { OrderSide } from "../enums";
 import { NodeInfo } from "./NodeInfo";
 import { Order } from "./Order";
 
@@ -12,6 +11,6 @@ export type Trade = {
   price: number;
   role: OrderRole;
   executed_at: string;
-  side: OrderSide;
+  side: string;
   counterparty: NodeInfo;
 };

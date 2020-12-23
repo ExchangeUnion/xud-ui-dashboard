@@ -9,6 +9,7 @@ import React, { ReactElement, useEffect, useState } from "react";
 import { combineLatest, Observable, Subject } from "rxjs";
 import api from "../../api";
 import { satsToCoinsStr } from "../../common/currencyUtil";
+import ErrorMessage from "../../common/ErrorMessage";
 import { getErrorMsg } from "../../common/errorUtil";
 import Loader from "../../common/Loader";
 import QrCode from "../../common/QrCode";
@@ -18,7 +19,6 @@ import { Info } from "../../models/Info";
 import Address from "./Address";
 import BoltzFeeInfo from "./BoltzFeeInfo";
 import CheckBoltzTransactionStatus from "./CheckBoltzTransactionStatus";
-import ErrorMessage from "./ErrorMessage";
 import WarningMessage from "./WarningMessage";
 
 type DepositProps = {

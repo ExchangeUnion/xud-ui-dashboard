@@ -12,6 +12,13 @@ import { Status } from "./models/Status";
 import { TradehistoryResponse } from "./models/TradehistoryResponse";
 import { TradinglimitsResponse } from "./models/TradinglimitsResponse";
 import io from "socket.io-client";
+import { ListpairsResponse } from "./models/ListpairsResponse";
+import { PlaceOrderParams } from "./models/PlaceOrderParams";
+import { ListordersResponse } from "./models/ListordersResponse";
+import { ListordersParams } from "./models/ListordersParams";
+import { RemoveOrderParams } from "./models/RemoveOrderParams";
+import { OrderBookParams } from "./models/OrderBookParams";
+import { OrderBookResponse } from "./models/OrderBookResponse";
 
 const url =
   process.env.NODE_ENV === "development"
@@ -36,9 +43,14 @@ const logAndThrow = (url: string, err: string) => {
 const fetchJsonResponse = <T>(
   url: string,
   body?: BodyInit,
+  params?: Record<string, any>,
   method: "GET" | "POST" | "PUT" | "DELETE" = "GET"
 ): Observable<T> => {
-  return from(fetch(`${url}`, { method, body })).pipe(
+  const queryUrl = new URL(url);
+  if (params) {
+    queryUrl.search = new URLSearchParams(params).toString();
+  }
+  return from(fetch(queryUrl.toString(), { method, body })).pipe(
     mergeMap((resp: Response) =>
       from(resp.json()).pipe(
         mergeMap((body) => (resp.ok ? of(body) : throwError(body)))
@@ -139,6 +151,37 @@ export default {
   tradehistory$(): Observable<TradehistoryResponse> {
     return fetchJsonResponse(`${xudPath}/tradehistory`);
   },
+
+  listpairs$(): Observable<ListpairsResponse> {
+    return fetchJsonResponse(`${xudPath}/listpairs`);
+  },
+
+  listorders$(params: ListordersParams): Observable<ListordersResponse> {
+    return fetchJsonResponse(`${xudPath}/listorders`, undefined, params);
+  },
+
+  orderbook$(params: OrderBookParams): Observable<OrderBookResponse> {
+    return fetchJsonResponse(`${xudPath}/orderbook`, undefined, params);
+  },
+
+  placeOrder$(params: PlaceOrderParams): Observable<void> {
+    return fetchJsonResponse(
+      `${xudPath}/placeorder`,
+      JSON.stringify(params),
+      undefined,
+      "POST"
+    );
+  },
+
+  removeOrder$(params: RemoveOrderParams): Observable<void> {
+    return fetchJsonResponse(
+      `${xudPath}/removeorder`,
+      JSON.stringify(params),
+      undefined,
+      "POST"
+    );
+  },
+
   boltzDeposit$(currency: string): Observable<DepositResponse> {
     return fetchJsonResponse(`${boltzPath}/deposit/${currency.toLowerCase()}`);
   },
@@ -159,6 +202,7 @@ export default {
     return fetchJsonResponse(
       `${boltzPath}/withdraw/${currency.toLowerCase()}`,
       msgBody,
+      undefined,
       "POST"
     );
   },
@@ -167,6 +211,7 @@ export default {
     return fetchJsonResponse(
       `${xudPath}/unlock`,
       JSON.stringify({ password }),
+      undefined,
       "POST"
     );
   },

@@ -30,7 +30,7 @@ type StateType = {
 const styles = (theme: Theme) => {
   return createStyles({
     wrapper: {
-      height: "90%",
+      flex: 1,
     },
     title: {
       marginBottom: theme.spacing(2),
@@ -43,7 +43,7 @@ const styles = (theme: Theme) => {
       fontFamily: "monospace",
     },
     terminalContainer: {
-      height: "100%",
+      height: "90%",
       width: "100%",
       overflowY: "auto",
     },

@@ -42,8 +42,7 @@ type WalletItemView = {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     card: {
-      height: "100%",
-      minHeight: 446,
+      height: 446,
       minWidth: 514,
     },
     cardContent: {

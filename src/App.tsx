@@ -1,5 +1,5 @@
 import CssBaseline from "@material-ui/core/CssBaseline";
-import { createMuiTheme, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme, withStyles } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import React, { ReactElement } from "react";
 import {
@@ -12,25 +12,25 @@ import ConnectionFailed from "./common/ConnectionFailed";
 import NotFound from "./common/NotFound";
 import Dashboard from "./dashboard/Dashboard";
 import { Path } from "./router/Path";
-
-const darkTheme = createMuiTheme({
-  palette: {
-    type: "dark",
-  },
-});
+import { darkTheme } from "./themes";
 
 const GlobalCss = withStyles((theme: Theme) => {
+  const background = theme.palette.background;
   return {
     "@global": {
+      "*": {
+        "scrollbar-width": "thin",
+        "scrollbar-color": `${background.paper} ${background.default}`,
+      },
       "::-webkit-scrollbar": {
         width: 8,
       },
       "::-webkit-scrollbar-track": {
-        background: theme.palette.background.default,
+        background: background.default,
       },
       "::-webkit-scrollbar-thumb": {
         borderRadius: "4px",
-        background: theme.palette.background.paper,
+        background: background.paper,
       },
       "::-webkit-scrollbar-thumb:hover": {
         background: theme.palette.grey[700],

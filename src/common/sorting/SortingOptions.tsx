@@ -36,7 +36,6 @@ export type SortOption<T> = {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     sortIconContainer: {
-      paddingRight: theme.spacing(2),
       paddingTop: theme.spacing(2),
     },
     sortOptionsMenu: {

@@ -4,6 +4,7 @@ export enum Path {
   DASHBOARD = "/dashboard",
   HOME = "/",
   OVERVIEW = "/overview",
+  TRADE = "/trade",
   TRADEHISTORY = "/tradehistory",
   WALLETS = "/wallets",
 }

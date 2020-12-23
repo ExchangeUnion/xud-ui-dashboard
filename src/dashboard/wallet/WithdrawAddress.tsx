@@ -8,16 +8,16 @@ import {
 } from "@material-ui/core";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import React, { ReactElement, useState } from "react";
-import { satsToCoinsStr } from "../../common/currencyUtil";
-import { BOLTZ_ERROR_MESSAGES, getErrorMsg } from "../../common/errorUtil";
 import ButtonWithLoading from "../../common/ButtonWithLoading";
+import { satsToCoinsStr } from "../../common/currencyUtil";
+import ErrorMessage from "../../common/ErrorMessage";
+import { BOLTZ_ERROR_MESSAGES, getErrorMsg } from "../../common/errorUtil";
 import QrCode from "../../common/QrCode";
 import { Fees } from "../../models/BoltzFees";
 import { CreateReverseSwapResponse } from "../../models/CreateReverseSwapResponse";
 import { GetServiceInfoResponse } from "../../models/GetServiceInfoResponse";
 import Address from "./Address";
 import BoltzFeeInfo from "./BoltzFeeInfo";
-import ErrorMessage from "./ErrorMessage";
 import { withdraw } from "./walletUtil";
 import WarningMessage from "./WarningMessage";
 
@@ -38,6 +38,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     buttonContainer: {
       marginTop: 1,
+      marginBottom: theme.spacing(2),
     },
   })
 );
