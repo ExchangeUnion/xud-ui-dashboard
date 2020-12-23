@@ -19,7 +19,7 @@ import { satsToCoins } from "../../common/currencyUtil";
 import PageCircularProgress from "../../common/PageCircularProgress";
 import SortingOptions, {
   SortOption,
-} from "../../common/sorting/SortingOptions";
+} from "../../common/sorting/sortingOptions";
 import {
   getComparator,
   SortingOrder,
