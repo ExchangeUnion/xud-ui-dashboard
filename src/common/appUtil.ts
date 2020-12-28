@@ -19,6 +19,14 @@ export const openLink = (url: string): void => {
   window.open(url, "_blank", "noopener");
 };
 
+export const logError = (err: string): void => {
+  if (isElectron()) {
+    sendMessageToParent(`logError: ${err}`);
+    return;
+  }
+  console.log(err);
+};
+
 export const sendMessageToParent = (message: string): void => {
   window.parent.postMessage(message, "*");
 };
