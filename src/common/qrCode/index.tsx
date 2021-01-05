@@ -1,15 +1,14 @@
 import {
-  createStyles,
   Grid,
   IconButton,
-  makeStyles,
-  Paper,
-  Theme,
-  Typography,
+  Typography
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import QRCode from "qrcode.react";
 import React, { ReactElement } from "react";
+
+//styles
+import { Container } from './styles';
 
 type QrCodeProps = {
   value: string;
@@ -17,27 +16,10 @@ type QrCodeProps = {
   size?: number;
 };
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    container: {
-      display: "flex",
-      flexDirection: "column",
-      width: "100%",
-      height: "100%",
-      backgroundColor: theme.palette.background.default,
-      padding: theme.spacing(2),
-    },
-    content: {
-      height: "100%",
-    },
-  })
-);
-
 const QrCode = (props: QrCodeProps): ReactElement => {
-  const classes = useStyles();
   const { value, handleClose, size } = props;
   return (
-    <Paper className={classes.container}>
+    <Container>
       <Grid item container justify="flex-end">
         <IconButton onClick={handleClose}>
           <CloseIcon />
@@ -48,7 +30,7 @@ const QrCode = (props: QrCodeProps): ReactElement => {
           <QRCode value={value} size={size || 150}></QRCode>
         </Typography>
       </Grid>
-    </Paper>
+    </Container>
   );
 };
 
