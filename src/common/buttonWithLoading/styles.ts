@@ -16,5 +16,5 @@ export const ButtonProgress = styled(CircularProgress)<ButtonProgressType>`
   top: 50%;
   left: 50%;
   margin-top: -12px;
-  margin-left: -12;
+  margin-left: -12px;
 `;
