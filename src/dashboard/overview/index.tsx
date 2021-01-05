@@ -2,7 +2,7 @@ import Grid from "@material-ui/core/Grid";
 import React, { ReactElement } from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import api from "../../api";
-import PageCircularProgress from "../../common/PageCircularProgress";
+import PageCircularProgress from "../../common/pageCircularProgress";
 import { Status } from "../../models/Status";
 import DashboardContent, { DashboardContentState } from "../DashboardContent";
 import OverviewItem from "./overviewItem";

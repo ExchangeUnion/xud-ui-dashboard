@@ -1,9 +1,9 @@
 import { Tooltip } from "@material-ui/core";
 import InfoIcon from "@material-ui/icons/InfoOutlined";
 import React, { ReactElement } from "react";
-import { satsToCoinsStr } from "../../common/currencyUtil";
-import Balance from "../../models/Balance";
-import WalletRow, { WalletSubrow } from "./WalletRow";
+import { satsToCoinsStr } from "../../../common/currencyUtil";
+import Balance from "../../../models/Balance";
+import WalletRow, { WalletSubrow } from "../walletRow";
 
 type BalanceSummaryProps = {
   balance: Balance;

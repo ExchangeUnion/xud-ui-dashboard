@@ -1,38 +1,30 @@
 import {
-  createStyles,
   Grid,
-  makeStyles,
-  Theme,
-  Typography,
+  Typography
 } from "@material-ui/core";
 import React, { ReactElement, useEffect, useState } from "react";
 import { Observable, Subject } from "rxjs";
-import api from "../../api";
-import { satsToCoinsStr } from "../../common/currencyUtil";
-import { getErrorMsg } from "../../common/errorUtil";
-import Loader from "../../common/Loader";
-import QrCode from "../../common/QrCode";
-import { DepositResponse } from "../../models/DepositResponse";
-import { Info } from "../../models/Info";
-import Address from "./Address";
-import BoltzFeeInfo from "./BoltzFeeInfo";
-import CheckBoltzTransactionStatus from "./CheckBoltzTransactionStatus";
-import ErrorMessage from "./ErrorMessage";
-import WarningMessage from "./WarningMessage";
+import api from "../../../api";
+import { satsToCoinsStr } from "../../../common/currencyUtil";
+import { getErrorMsg } from "../../../common/errorUtil";
+import Loader from "../../../common/loader";
+import QrCode from "../../../common/qrCode";
+import { DepositResponse } from "../../../models/DepositResponse";
+import { Info } from "../../../models/Info";
+import Address from "../address";
+import BoltzFeeInfo from "../boltzFeeInfo";
+import CheckBoltzTransactionStatus from "../checkBoltzStatus";
+import ErrorMessage from "../errorMessage";
+import WarningMessage from "../WarningMessage";
+
+//styles
+import { Row } from  './styles';
 
 type DepositProps = {
   currency: string;
   refreshSubject: Subject<void>;
   getInfo$: Observable<Info>;
 };
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    row: {
-      paddingTop: theme.spacing(2),
-    },
-  })
-);
 
 const getAvgMinutesBetweenBlocks = (
   start: number,
@@ -59,7 +51,6 @@ const getTimeString = (minutes: number): string => {
 
 const Deposit = (props: DepositProps): ReactElement => {
   const { currency, refreshSubject, getInfo$ } = props;
-  const classes = useStyles();
 
   const [depositData, setDepositData] = useState<DepositResponse | undefined>(
     undefined
@@ -137,12 +128,12 @@ const Deposit = (props: DepositProps): ReactElement => {
                 readOnly={true}
               />
               <BoltzFeeInfo fees={depositData.fees} currency={currency} />
-              <div className={classes.row}>
+              <Row>
                 <CheckBoltzTransactionStatus
                   currency={currency}
                   id={depositData.id}
                 />
-              </div>
+              </Row>
             </Grid>
           ) : (
             <Grid item>

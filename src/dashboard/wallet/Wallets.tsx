@@ -6,12 +6,12 @@ import { RouteComponentProps, withRouter } from "react-router-dom";
 import { timer } from "rxjs";
 import { exhaustMap, shareReplay } from "rxjs/operators";
 import api from "../../api";
-import PageCircularProgress from "../../common/PageCircularProgress";
+import PageCircularProgress from "../../common/pageCircularProgress";
 import { GetbalanceResponse } from "../../models/GetbalanceResponse";
 import { TradinglimitsResponse } from "../../models/TradinglimitsResponse";
 import DashboardContent, { DashboardContentState } from "../DashboardContent";
 import ViewDisabled from "../ViewDisabled";
-import WalletItem from "./WalletItem";
+import WalletItem from "./walletItem";
 
 type PropsType = RouteComponentProps<{ param1: string }> &
   WithStyles<typeof styles>;

@@ -1,17 +1,17 @@
 import {
-  createStyles,
   Grid,
-  makeStyles,
-  Theme,
   Tooltip,
   Typography,
 } from "@material-ui/core";
 import Link from "@material-ui/core/Link";
 import InfoIcon from "@material-ui/icons/InfoOutlined";
 import React, { ReactElement } from "react";
-import { openLink } from "../../common/appUtil";
-import { satsToCoinsStr } from "../../common/currencyUtil";
-import { Fees } from "../../models/BoltzFees";
+import { openLink } from "../../../common/appUtil";
+import { satsToCoinsStr } from "../../../common/currencyUtil";
+import { Fees } from "../../../models/BoltzFees";
+
+//styles
+import { IconContainer } from './styles';
 
 type BoltzFeeInfoProps = {
   fees: Fees;
@@ -21,24 +21,8 @@ type BoltzFeeInfoProps = {
 
 const BOLTZ_URL = "https://boltz.exchange";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    iconContainer: {
-      display: "flex",
-      alignItems: "center",
-    },
-    link: {
-      color: theme.palette.text.primary,
-      "a:hover": {
-        color: theme.palette.text.primary,
-      },
-    },
-  })
-);
-
 const BoltzFeeInfo = (props: BoltzFeeInfoProps): ReactElement => {
   const { fees, currency, amount } = props;
-  const classes = useStyles();
 
   const swapFee = amount
     ? `${satsToCoinsStr((amount * fees.percentage) / 100, currency)} (${
@@ -55,7 +39,7 @@ const BoltzFeeInfo = (props: BoltzFeeInfoProps): ReactElement => {
       wrap="nowrap"
       spacing={1}
     >
-      <Grid item className={classes.iconContainer}>
+      <IconContainer item>
         <Tooltip
           title={
             <div>
@@ -73,7 +57,7 @@ const BoltzFeeInfo = (props: BoltzFeeInfoProps): ReactElement => {
         >
           <InfoIcon fontSize="small" />
         </Tooltip>
-      </Grid>
+      </IconContainer>
       <Grid item>
         <Typography variant="body2" align="center" noWrap>
           Boltz swap fee: <strong>{swapFee}</strong> | Miner fee:{" "}

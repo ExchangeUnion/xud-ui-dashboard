@@ -1,17 +1,18 @@
 import {
-  createStyles,
-  Grid,
   Icon,
   IconButton,
   InputAdornment,
-  makeStyles,
-  OutlinedInput,
-  Theme,
   Tooltip,
 } from "@material-ui/core";
 import FileCopyOutlinedIcon from "@material-ui/icons/FileCopyOutlined";
 import React, { ReactElement } from "react";
-import { copyToClipboard } from "../../common/appUtil";
+import { copyToClipboard } from "../../../common/appUtil";
+
+//styles
+import {
+  AddressContainer,
+  AddressField
+} from './styles';
 
 type AddressProps = {
   address: string;
@@ -21,50 +22,21 @@ type AddressProps = {
   readOnly: boolean;
 };
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    addressContainer: {
-      margin: `${theme.spacing(2)}px 0px`,
-    },
-    addressField: {
-      marginBottom: theme.spacing(2),
-    },
-    addressFieldReadOnly: {
-      color: theme.palette.text.primary,
-      marginBottom: theme.spacing(2),
-      "&.MuiOutlinedInput-root.Mui-focused fieldset": {
-        borderColor: theme.palette.common.white,
-        borderWidth: 1,
-      },
-    },
-    qrButton: {
-      textTransform: "none",
-    },
-  })
-);
-
 const Address = (props: AddressProps): ReactElement => {
   const { address, setAddress, showQr, openQr, readOnly } = props;
-  const classes = useStyles();
-
-  const addressFieldClass = readOnly
-    ? `${classes.addressField} ${classes.addressFieldReadOnly}`
-    : classes.addressField;
 
   return (
-    <Grid
+    <AddressContainer
       item
       container
       direction="column"
-      className={classes.addressContainer}
     >
-      <OutlinedInput
+      <AddressField
         fullWidth
-        className={addressFieldClass}
         color="primary"
         readOnly={readOnly}
         value={address}
-        onChange={(event) =>
+        onChange={(event: any) =>
           setAddress ? setAddress(event.target.value) : void 0
         }
         endAdornment={
@@ -86,7 +58,7 @@ const Address = (props: AddressProps): ReactElement => {
           </InputAdornment>
         }
       />
-    </Grid>
+    </AddressContainer>
   );
 };
 

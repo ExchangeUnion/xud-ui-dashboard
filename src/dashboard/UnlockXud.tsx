@@ -13,7 +13,7 @@ import {
 import React, { ReactElement, useState } from "react";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
-import ButtonWithLoading from "../common/ButtonWithLoading";
+import ButtonWithLoading from "../common/buttonWithLoading";
 import api from "../api";
 import { getErrorMsg, XUD_ERROR_MESSAGES } from "../common/errorUtil";
 

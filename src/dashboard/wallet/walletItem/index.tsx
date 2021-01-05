@@ -1,22 +1,29 @@
-import { createStyles, makeStyles, Theme, Typography } from "@material-ui/core";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
+import { Typography } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import React, { ReactElement, useEffect, useState } from "react";
 import { Observable, Subject } from "rxjs";
 import { filter, mergeMap, pluck, take } from "rxjs/operators";
-import { getErrorMsg } from "../../common/errorUtil";
-import { isServiceReady } from "../../common/serviceUtil";
-import Balance from "../../models/Balance";
-import { Info } from "../../models/Info";
-import { Status } from "../../models/Status";
-import { TradingLimits } from "../../models/TradingLimits";
-import BalanceSummary from "./BalanceSummary";
-import Deposit from "./Deposit";
-import LimitsSummary from "./LimitsSummary";
-import WalletItemHeader from "./WalletItemHeader";
-import WalletTransactionButton from "./WalletTransactionButton";
-import Withdraw from "./Withdraw";
+import { getErrorMsg } from "../../../common/errorUtil";
+import { isServiceReady } from "../../../common/serviceUtil";
+import Balance from "../../../models/Balance";
+import { Info } from "../../../models/Info";
+import { Status } from "../../../models/Status";
+import { TradingLimits } from "../../../models/TradingLimits";
+import BalanceSummary from "../balanceSummary";
+import Deposit from "../deposit";
+import LimitsSummary from "../limitsSummary";
+import WalletItemHeader from "../walletItemHeader";
+import WalletTransactionButton from "../WalletTransactionButton";
+import Withdraw from "../Withdraw";
+
+//styles
+import {
+  Card,
+  CardContent,
+  CardBody,
+  ViewContent,
+  RowsGroup
+} from './styles';
 
 export type WalletItemProps = {
   currency: string;
@@ -39,36 +46,10 @@ type WalletItemView = {
   title?: string;
 };
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    card: {
-      height: "100%",
-      minHeight: 446,
-      minWidth: 514,
-    },
-    cardContent: {
-      padding: theme.spacing(3),
-      height: "100%",
-      display: "flex",
-      flexDirection: "column",
-    },
-    cardBody: {
-      height: "100%",
-    },
-    viewContent: {
-      paddingTop: theme.spacing(3),
-    },
-    rowsGroup: {
-      paddingTop: theme.spacing(2),
-    },
-  })
-);
-
 const transactionButtonsVisible = (currency: string): boolean =>
   ["BTC", "LTC"].includes(currency);
 
 const WalletItem = (props: WalletItemProps): ReactElement => {
-  const classes = useStyles();
   const { balance, currency, limits, getInfo$, getBoltzStatus$ } = props;
   const [activeViewType, setActiveViewType] = useState(
     WalletItemViewType.BALANCE
@@ -155,30 +136,28 @@ const WalletItem = (props: WalletItemProps): ReactElement => {
 
   return (
     <Grid item xs={12} lg={6} xl={4}>
-      <Card className={classes.card}>
-        <CardContent className={classes.cardContent}>
+      <Card>
+        <CardContent>
           <WalletItemHeader
             currency={currency}
             refreshSubject={refreshSubject!}
             isActive={isActive}
             setActiveViewType={setActiveViewType}
           />
-          <Grid
+          <CardBody
             item
             container
             direction="column"
             justify="space-between"
-            className={classes.cardBody}
           >
             {views.map(
               (view) =>
                 isActive(view.type) && (
-                  <Grid
+                  <RowsGroup
                     key={view.type}
                     item
                     container
                     direction="column"
-                    className={classes.rowsGroup}
                   >
                     {!!view.title && (
                       <Grid item container justify="center">
@@ -191,25 +170,23 @@ const WalletItem = (props: WalletItemProps): ReactElement => {
                         </Typography>
                       </Grid>
                     )}
-                    <Grid
+                    <ViewContent
                       item
                       container
                       direction="column"
-                      className={classes.viewContent}
                     >
                       {view.component}
-                    </Grid>
-                  </Grid>
+                    </ViewContent>
+                  </RowsGroup>
                 )
             )}
             {isActive(WalletItemViewType.BALANCE, WalletItemViewType.LIMITS) &&
               transactionButtonsVisible(currency) && (
-                <Grid
+                <RowsGroup
                   item
                   container
                   justify="center"
                   spacing={6}
-                  className={classes.rowsGroup}
                 >
                   <WalletTransactionButton
                     text="Deposit"
@@ -225,9 +202,9 @@ const WalletItem = (props: WalletItemProps): ReactElement => {
                       setActiveViewType(WalletItemViewType.WITHDRAW)
                     }
                   />
-                </Grid>
+                </RowsGroup>
               )}
-          </Grid>
+          </CardBody>
         </CardContent>
       </Card>
     </Grid>

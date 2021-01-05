@@ -1,22 +1,17 @@
 import {
-  createStyles,
   Divider,
   Grid,
-  IconButton,
   Paper,
-  Theme,
-  Typography,
-  withStyles,
-  WithStyles,
+  Typography
 } from "@material-ui/core";
 import FileCopyOutlinedIcon from "@material-ui/icons/FileCopyOutlined";
 import React, { ReactElement } from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import api from "../../api";
 import { copyToClipboard } from "../../common/appUtil";
-import CenterEllipsis from "../../common/CenterEllipsis";
+import CenterEllipsis from "../../common/centerEllipsis";
 import { satsToCoins } from "../../common/currencyUtil";
-import PageCircularProgress from "../../common/PageCircularProgress";
+import PageCircularProgress from "../../common/pageCircularProgress";
 import SortingOptions, {
   SortOption,
 } from "../../common/sorting/sortingOptions";
@@ -30,7 +25,10 @@ import { Trade } from "../../models/Trade";
 import { TradehistoryResponse } from "../../models/TradehistoryResponse";
 import DashboardContent, { DashboardContentState } from "../DashboardContent";
 import ViewDisabled from "../ViewDisabled";
-import TradehistoryDownload from "./TradehistoryDownload";
+import TradehistoryDownload from "./tradehistoryDownload";
+
+//styles
+import { TableCell, TableCellIcon} from './styles';
 
 export type TradeRow = {
   swapHash: string;
@@ -54,25 +52,13 @@ export type TradeHeader = {
   gridsXl?: 1 | 2 | 3 | 4;
 };
 
-type PropsType = RouteComponentProps<{ param1: string }> &
-  WithStyles<typeof styles>;
+type PropsType = RouteComponentProps<{ param1: string }>;
 
 type StateType = DashboardContentState & {
   trades?: TradehistoryResponse;
   rows: TradeRow[];
   orderBy: SortOption<TradeRow>;
   sortingOrder: SortingOrder;
-};
-
-const styles = (theme: Theme) => {
-  return createStyles({
-    tableCell: {
-      padding: theme.spacing(2),
-    },
-    tableCellIcon: {
-      marginLeft: theme.spacing(1),
-    },
-  });
 };
 
 const getDisplayValue = (
@@ -169,8 +155,6 @@ class Tradehistory extends DashboardContent<PropsType, StateType> {
   };
 
   render(): ReactElement {
-    const { classes } = this.props;
-
     return (
       <Grid container direction="column">
         {this.state.xudLocked || this.state.xudNotReady ? (
@@ -189,18 +173,17 @@ class Tradehistory extends DashboardContent<PropsType, StateType> {
               ></SortingOptions>
               <Grid item container justify="space-between" wrap="nowrap">
                 {this.tableHeaders.map((header) => (
-                  <Grid
+                  <TableCell
                     key={header.key}
                     item
                     container
                     xs={header.gridsXs || 2}
                     xl={header.gridsXl || header.gridsXs || 2}
-                    className={classes.tableCell}
                   >
                     <Typography component="span" variant="body1">
                       {header.label}
                     </Typography>
-                  </Grid>
+                  </TableCell>
                 ))}
               </Grid>
               <Divider />
@@ -223,12 +206,11 @@ class Tradehistory extends DashboardContent<PropsType, StateType> {
                       key={getRowId(row)}
                     >
                       {this.tableHeaders.map((column) => (
-                        <Grid
+                        <TableCell
                           item
                           container
                           xs={column.gridsXs || 2}
                           xl={column.gridsXl || column.gridsXs || 2}
-                          className={classes.tableCell}
                           key={`${getRowId(row)}_${column.key}`}
                         >
                           {column.copyIcon && row[column.key] ? (
@@ -239,9 +221,8 @@ class Tradehistory extends DashboardContent<PropsType, StateType> {
                               alignItems="flex-start"
                             >
                               <CenterEllipsis text={row[column.key] + ""} />
-                              <IconButton
+                              <TableCellIcon
                                 size="small"
-                                className={classes.tableCellIcon}
                                 onClick={() =>
                                   copyToClipboard(
                                     getDisplayValue(row, column.key)
@@ -249,14 +230,14 @@ class Tradehistory extends DashboardContent<PropsType, StateType> {
                                 }
                               >
                                 <FileCopyOutlinedIcon fontSize="inherit" />
-                              </IconButton>
+                              </TableCellIcon>
                             </Grid>
                           ) : (
                             <Typography variant="body2" component="span">
                               {getDisplayValue(row, column.key)}
                             </Typography>
                           )}
-                        </Grid>
+                        </TableCell>
                       ))}
                     </Grid>
                   ))}
@@ -279,6 +260,4 @@ class Tradehistory extends DashboardContent<PropsType, StateType> {
   }
 }
 
-export default withRouter(
-  withStyles(styles, { withTheme: true })(Tradehistory)
-);
+export default withRouter(Tradehistory);

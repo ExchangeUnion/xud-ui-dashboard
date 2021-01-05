@@ -20,14 +20,14 @@ import { interval } from "rxjs";
 import { filter, map, mergeMap, takeUntil } from "rxjs/operators";
 import api from "../api";
 import { isElectron, sendMessageToParent } from "../common/appUtil";
-import NotFound from "../common/NotFound";
+import NotFound from "../common/notFound";
 import { SetupStatusResponse } from "../models/SetupStatusResponse";
 import { Status } from "../models/Status";
 import { Path } from "../router/Path";
 import Console from "./console";
 import MenuItem, { MenuItemProps } from "./menu/menuItem";
 import Overview from "./overview";
-import Tradehistory from "./tradehistory/Tradehistory";
+import Tradehistory from "./tradehistory";
 import Wallets from "./wallet/Wallets";
 
 export const drawerWidth = 200;

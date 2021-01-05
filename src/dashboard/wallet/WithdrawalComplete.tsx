@@ -8,7 +8,7 @@ import {
 } from "@material-ui/core";
 import React, { ReactElement } from "react";
 import { satsToCoinsStr } from "../../common/currencyUtil";
-import CheckBoltzTransactionStatus from "./CheckBoltzTransactionStatus";
+import CheckBoltzTransactionStatus from "./checkBoltzStatus";
 
 type WithdrawalCompleteProps = {
   amount: number;
