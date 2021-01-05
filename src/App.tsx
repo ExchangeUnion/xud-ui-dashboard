@@ -9,8 +9,8 @@ import {
   Route,
   Switch,
 } from "react-router-dom";
-import ConnectionFailed from "./common/ConnectionFailed";
-import NotFound from "./common/NotFound";
+import ConnectionFailed from "./common/connectionFailed";
+import NotFound from "./common/notFound";
 import Dashboard from "./dashboard/Dashboard";
 import { Path } from "./router/Path";
 
