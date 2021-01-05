@@ -138,7 +138,7 @@ const OverviewItem = (props: OverviewItemProps): ReactElement => {
           >
             <span className={statusDotClass}></span>
             <Typography component="span" variant="body1" noWrap>
-              {props.status.service} info
+              {props.status.service}
             </Typography>
           </Grid>
           <Grid container item justify="flex-end">
