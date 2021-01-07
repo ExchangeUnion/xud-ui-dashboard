@@ -3,7 +3,7 @@ import { Grid } from "@material-ui/core";
 
 //types
 type LoaderContainerType = {
-  container: any;
+  container: boolean;
 }
 
 //styled

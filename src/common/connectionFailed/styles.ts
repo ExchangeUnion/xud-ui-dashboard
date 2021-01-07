@@ -3,8 +3,8 @@ import { Grid } from "@material-ui/core";
 
 //types
 type ContainerType = {
-  item: any;
-  container: any;
+  item: boolean;
+  container: boolean;
   direction: string;
   alignItems: string;
   justify: string;

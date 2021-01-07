@@ -8,7 +8,7 @@ import {
 
 //type
 type StyledGridType = {
-  container: any;
+  container: boolean;
   justify: string;
   alignItems: string;
   wrap: string;

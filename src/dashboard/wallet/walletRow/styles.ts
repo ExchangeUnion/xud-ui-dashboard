@@ -3,8 +3,8 @@ import { Grid } from "@material-ui/core";
 
 //types
 type RowType = {
-  item: any;
-  container: any;
+  item: boolean;
+  container: boolean;
 }
 
 //styled

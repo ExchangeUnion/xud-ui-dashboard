@@ -4,8 +4,8 @@ import { Grid, IconButton } from "@material-ui/core";
 //types
 type TableCellType = {
   key: any;
-  item: any;
-  container: any;
+  item: boolean;
+  container: boolean;
   xs: number;
   xl: number;
 }

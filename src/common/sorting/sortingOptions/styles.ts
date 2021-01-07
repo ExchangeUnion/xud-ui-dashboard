@@ -10,7 +10,7 @@ import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 
 //types
 type SortIconContainerType = {
-  item: any;
+  item: boolean;
   container: boolean;
   justify: string;
 }
@@ -24,7 +24,7 @@ type SortOptionButtonType = {
 }
 
 type SortOptionActiveGridType = {
-  item: any;
+  item: boolean;
   container: boolean;
   alignItems: string;
   spacing: number;
@@ -74,6 +74,6 @@ export const StyledArrowUpwardIcon = styled(ArrowUpwardIcon)`
 
 const getArrowIconStyles = (p: any) => {
   return `
-    font-size: ${p.theme.typography.body2.fontSize}px;
+    font-size: ${p.theme.typography.body2.fontSize};
   `;
 }

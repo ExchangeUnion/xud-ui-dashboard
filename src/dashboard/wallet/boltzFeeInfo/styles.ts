@@ -3,7 +3,7 @@ import { Grid } from "@material-ui/core";
 
 //types
 type IconContainerType = {
-  item: any;
+  item: boolean;
 }
 
 //styled

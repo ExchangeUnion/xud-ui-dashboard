@@ -4,8 +4,8 @@ import CSVLink from "../../../common/csv/CsvLink";
 
 //types
 type DownloadButtonContainerType = {
-  item: any;
-  container: any;
+  item: boolean;
+  container: boolean;
   justify: string;
 }
 

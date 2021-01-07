@@ -6,8 +6,8 @@ import {
 
 //types
 type RowType = {
-  item: any;
-  container: any;
+  item: boolean;
+  container: boolean;
   justify: string;
 }
 
@@ -17,7 +17,7 @@ type CodeType = {
 }
 
 type IconContainterType = {
-  item: any;
+  item: boolean;
 }
 
 //styled

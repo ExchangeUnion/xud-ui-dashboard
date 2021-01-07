@@ -7,22 +7,22 @@ import {
 
 //types
 type CardBodyType = {
-  item: any;
-  container: any;
+  item: boolean;
+  container: boolean;
   direction: string;
   justify: string;
 }
 
 type ViewContentType = {
-  item: any;
-  container: any;
+  item: boolean;
+  container: boolean;
   direction: string;
 }
 
 type RowsGroupType = {
   key?: any;
-  item: any;
-  container: any;
+  item: boolean;
+  container: boolean;
   direction?: string;
   justify?: string;
   spacing?: number;

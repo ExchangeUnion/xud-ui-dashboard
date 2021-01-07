@@ -6,8 +6,8 @@ import {
 
 //types
 type AddressContainerType = {
-  item: any;
-  container: any;
+  item: boolean;
+  container: boolean;
   direction: string;
 }
 
