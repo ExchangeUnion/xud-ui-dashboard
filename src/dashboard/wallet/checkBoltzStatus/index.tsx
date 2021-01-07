@@ -14,7 +14,7 @@ import {
   Row,
   Code,
   IconContainer
-} from './styles';
+} from "./styles";
 
 type CheckBoltzTransactionStatusProps = {
   currency: string;

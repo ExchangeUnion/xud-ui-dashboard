@@ -11,7 +11,7 @@ import { satsToCoinsStr } from "../../../common/currencyUtil";
 import { Fees } from "../../../models/BoltzFees";
 
 //styles
-import { IconContainer } from './styles';
+import { IconContainer } from "./styles";
 
 type BoltzFeeInfoProps = {
   fees: Fees;

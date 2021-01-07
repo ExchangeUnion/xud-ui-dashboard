@@ -8,7 +8,7 @@ import { TradeHeader, TradeRow } from "..";
 import {
   DownloadButtonContainer,
   DownloadLink
-} from './styles';
+} from "./styles";
 
 export type TradehistoryDownloadProps = {
   rows: TradeRow[];

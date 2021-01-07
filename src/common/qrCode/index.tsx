@@ -8,7 +8,7 @@ import QRCode from "qrcode.react";
 import React, { ReactElement } from "react";
 
 //styles
-import { Container } from './styles';
+import { Container } from "./styles";
 
 type QrCodeProps = {
   value: string;

@@ -20,7 +20,7 @@ import {
   GridCell,
   TextRow,
   LoadedContainer
-} from './styles';
+} from "./styles";
 
 export type ServiceDetailsContentProps = {
   status: Status;

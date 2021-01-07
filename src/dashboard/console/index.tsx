@@ -13,7 +13,7 @@ import {
   Title,
   Code,
   TerminalContainer
-} from './styles';
+} from "./styles";
 
 type PropsType = RouteComponentProps<{ param1: string }>
 

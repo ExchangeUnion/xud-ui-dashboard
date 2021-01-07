@@ -21,7 +21,7 @@ import {
   SortDirIconContainer,
   StyledArrowDownwardIcon,
   StyledArrowUpwardIcon
-} from './styles';
+} from "./styles";
 
 export type SortingOptionsProps<T> = {
   sortOpts: SortOption<T>[];

@@ -1,7 +1,7 @@
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { createMuiTheme, Theme, withStyles } from "@material-ui/core/styles";
 import { ThemeProvider as ThemeProviderM } from "@material-ui/styles";
-import { ThemeProvider } from 'styled-components';
+import { ThemeProvider } from "styled-components";
 import React, { ReactElement } from "react";
 import {
   BrowserRouter as Router,

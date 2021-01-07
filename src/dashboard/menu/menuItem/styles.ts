@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 import $ListItem from "@material-ui/core/ListItem";
-import { ElementType } from 'react';
+import { ElementType } from "react";
 
 type ListItemType = {
   isDisabled?: boolean;

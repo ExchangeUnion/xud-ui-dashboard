@@ -26,7 +26,7 @@ import {
   StatusDot,
   Snackbar,
   SnackbarContent
-} from './styles';
+} from "./styles";
 
 export type OverviewItemProps = {
   status: Status;

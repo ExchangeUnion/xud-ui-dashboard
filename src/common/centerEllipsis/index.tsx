@@ -4,7 +4,7 @@ import React, { ReactElement } from "react";
 import {
   Left,
   Right
-} from './styles';
+} from "./styles";
 
 type PropsType = {
   text: string;

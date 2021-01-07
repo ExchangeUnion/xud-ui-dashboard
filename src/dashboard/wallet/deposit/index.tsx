@@ -18,7 +18,7 @@ import ErrorMessage from "../errorMessage";
 import WarningMessage from "../WarningMessage";
 
 //styles
-import { Row } from  './styles';
+import { Row } from  "./styles";
 
 type DepositProps = {
   currency: string;

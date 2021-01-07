@@ -8,7 +8,7 @@ import { NavLink, useLocation, useRouteMatch } from "react-router-dom";
 import { Path } from "../../../router/Path";
 
 //styles
-import { ListItem } from './styles';
+import { ListItem } from "./styles";
 
 export type MenuItemProps = {
   path: Path;

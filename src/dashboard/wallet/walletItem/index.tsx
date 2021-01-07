@@ -23,7 +23,7 @@ import {
   CardBody,
   ViewContent,
   RowsGroup
-} from './styles';
+} from "./styles";
 
 export type WalletItemProps = {
   currency: string;

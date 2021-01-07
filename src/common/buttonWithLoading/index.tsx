@@ -5,7 +5,7 @@ import React, { ReactElement } from "react";
 import {
   ButtonWrapper,
   ButtonProgress
-} from './styles';
+} from "./styles";
 
 type ButtonWithLoadingProps = {
   onClick: () => void;

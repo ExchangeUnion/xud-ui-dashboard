@@ -13,7 +13,7 @@ import ServiceDetailsContent from "../serviceDetailsContent";
 //styles
 import {
   Dialog
-} from './styles';
+} from "./styles";
 
 export type ServiceDetailsProps = {
   status: Status;

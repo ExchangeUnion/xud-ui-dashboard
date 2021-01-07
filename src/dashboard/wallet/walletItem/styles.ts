@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 import {
   Card as $Card,
   CardContent as $CardContent,

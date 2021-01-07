@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 import { Dialog as $Dialog} from "@material-ui/core";
 const drawerWidth = 200;
 

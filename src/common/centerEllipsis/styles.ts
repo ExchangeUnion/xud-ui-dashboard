@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const Left = styled.span`
   flex: 0 1 auto;

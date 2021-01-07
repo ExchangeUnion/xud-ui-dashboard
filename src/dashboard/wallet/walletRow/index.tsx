@@ -3,7 +3,7 @@ import Typography from "@material-ui/core/Typography";
 import React, { ReactElement } from "react";
 
 //styled
-import { Row } from './styles';
+import { Row } from "./styles";
 
 export type WalletRowProps = {
   label: string;

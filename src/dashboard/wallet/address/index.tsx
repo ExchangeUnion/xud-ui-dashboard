@@ -12,7 +12,7 @@ import { copyToClipboard } from "../../../common/appUtil";
 import {
   AddressContainer,
   AddressField
-} from './styles';
+} from "./styles";
 
 type AddressProps = {
   address: string;

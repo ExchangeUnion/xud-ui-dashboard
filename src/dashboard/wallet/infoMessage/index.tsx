@@ -2,7 +2,7 @@ import { Typography } from "@material-ui/core";
 import React, { ReactElement } from "react";
 
 //styles
-import { Card } from './styles';
+import { Card } from "./styles";
 
 type InfoMessageProps = {
   message: string;

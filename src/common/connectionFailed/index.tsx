@@ -11,7 +11,7 @@ import { isElectron, sendMessageToParent } from "../appUtil";
 import {
   Container,
   Row
-} from './styles';
+} from "./styles";
 
 const ConnectionFailed = (): ReactElement => {
   const history = useHistory();

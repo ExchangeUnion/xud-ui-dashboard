@@ -28,7 +28,7 @@ import ViewDisabled from "../ViewDisabled";
 import TradehistoryDownload from "./tradehistoryDownload";
 
 //styles
-import { TableCell, TableCellIcon} from './styles';
+import { TableCell, TableCellIcon} from "./styles";
 
 export type TradeRow = {
   swapHash: string;
