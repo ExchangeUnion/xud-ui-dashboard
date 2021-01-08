@@ -1,14 +1,14 @@
 import { Grid } from "@material-ui/core";
 import React, { ReactElement, useEffect, useState } from "react";
-import api from "../../api";
-import { getCurrencyFullName } from "../../common/currencyUtil";
-import { getErrorMsg } from "../../common/errorUtil";
-import Loader from "../../common/loader";
-import { GetServiceInfoResponse } from "../../models/GetServiceInfoResponse";
-import ErrorMessage from "./errorMessage";
-import WithdrawAddress from "./WithdrawAddress";
-import WithdrawalComplete from "./WithdrawalComplete";
-import WithdrawAmount from "./WithdrawAmount";
+import api from "../../../api";
+import { getCurrencyFullName } from "../../../common/currencyUtil";
+import { getErrorMsg } from "../../../common/errorUtil";
+import Loader from "../../../common/loader";
+import { GetServiceInfoResponse } from "../../../models/GetServiceInfoResponse";
+import ErrorMessage from "../errorMessage";
+import WithdrawAddress from "../withdrawAddress";
+import WithdrawalComplete from "../withdrawalComplete";
+import WithdrawAmount from "../withdrawAmount";
 
 type WithdrawProps = {
   currency: string;

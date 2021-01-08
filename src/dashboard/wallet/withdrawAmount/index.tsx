@@ -1,13 +1,9 @@
 import {
   Button,
-  createStyles,
   FormControl,
   InputAdornment,
   InputLabel,
-  makeStyles,
-  OutlinedInput,
-  Theme,
-  Typography,
+  OutlinedInput
 } from "@material-ui/core";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import React, { ReactElement, useEffect, useState } from "react";
@@ -15,10 +11,13 @@ import {
   coinsToSats,
   satsToCoins,
   satsToCoinsStr,
-} from "../../common/currencyUtil";
-import NumberInput from "../../common/NumberInput";
-import { GetServiceInfoResponse } from "../../models/GetServiceInfoResponse";
-import { getMaxWithdrawAmount, isAmountBetweenLimits } from "./walletUtil";
+} from "../../../common/currencyUtil";
+import NumberInput from "../../../common/NumberInput";
+import { GetServiceInfoResponse } from "../../../models/GetServiceInfoResponse";
+import { getMaxWithdrawAmount, isAmountBetweenLimits } from "../walletUtil";
+
+//styles
+import { Row } from "./styles";
 
 type WithdrawAmountProps = {
   currency: string;
@@ -27,14 +26,6 @@ type WithdrawAmountProps = {
   onNext: (amount: number) => void;
   initialAmountInSats?: number;
 };
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    row: {
-      padding: `${theme.spacing(2)}px 0px`,
-    },
-  })
-);
 
 const WithdrawAmount = (props: WithdrawAmountProps): ReactElement => {
   const {
@@ -46,7 +37,6 @@ const WithdrawAmount = (props: WithdrawAmountProps): ReactElement => {
   } = props;
   const [amount, setAmount] = useState<string>("");
   const inputId = `withdraw-${currency}-amount`;
-  const classes = useStyles();
 
   useEffect(() => {
     setAmount(
@@ -74,8 +64,7 @@ const WithdrawAmount = (props: WithdrawAmountProps): ReactElement => {
       </FormControl>
 
       {channelBalance < Number(serviceInfo.limits.minimal) ? (
-        <Typography
-          className={classes.row}
+        <Row
           variant="body2"
           color="error"
           align="center"
@@ -86,9 +75,9 @@ const WithdrawAmount = (props: WithdrawAmountProps): ReactElement => {
           </strong>
           , your Layer 2 balance is{" "}
           <strong>{satsToCoinsStr(channelBalance, currency)}</strong>
-        </Typography>
+        </Row>
       ) : (
-        <Typography className={classes.row} variant="body2" align="center">
+        <Row variant="body2" align="center">
           Range: {<strong>{satsToCoinsStr(serviceInfo.limits.minimal)}</strong>}{" "}
           to{" "}
           {
@@ -99,7 +88,7 @@ const WithdrawAmount = (props: WithdrawAmountProps): ReactElement => {
               )}
             </strong>
           }
-        </Typography>
+        </Row>
       )}
       <Button
         endIcon={<ArrowForwardIcon />}

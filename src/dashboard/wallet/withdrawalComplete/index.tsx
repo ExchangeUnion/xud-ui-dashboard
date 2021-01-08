@@ -1,14 +1,14 @@
 import {
   Button,
-  createStyles,
   Grid,
-  makeStyles,
-  Theme,
   Typography,
 } from "@material-ui/core";
 import React, { ReactElement } from "react";
-import { satsToCoinsStr } from "../../common/currencyUtil";
-import CheckBoltzTransactionStatus from "./checkBoltzStatus";
+import { satsToCoinsStr } from "../../../common/currencyUtil";
+import CheckBoltzTransactionStatus from "../checkBoltzStatus";
+
+//styled
+import { Row } from "./styles";
 
 type WithdrawalCompleteProps = {
   amount: number;
@@ -18,17 +18,8 @@ type WithdrawalCompleteProps = {
   onClose: () => void;
 };
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    row: {
-      marginTop: theme.spacing(2),
-    },
-  })
-);
-
 const WithdrawalComplete = (props: WithdrawalCompleteProps): ReactElement => {
   const { amount, address, currency, swapId, onClose } = props;
-  const classes = useStyles();
 
   return (
     <>
@@ -38,15 +29,14 @@ const WithdrawalComplete = (props: WithdrawalCompleteProps): ReactElement => {
           <strong>{address}</strong> was successful!
         </Typography>
       </Grid>
-      <Grid item container justify="center" className={classes.row}>
+      <Row item container justify="center">
         <CheckBoltzTransactionStatus currency={currency} id={swapId} />
-      </Grid>
-      <Grid
+      </Row>
+      <Row
         item
         container
         alignItems="center"
         justify="center"
-        className={classes.row}
       >
         <Button
           variant="contained"
@@ -56,7 +46,7 @@ const WithdrawalComplete = (props: WithdrawalCompleteProps): ReactElement => {
         >
           Close
         </Button>
-      </Grid>
+      </Row>
     </>
   );
 };

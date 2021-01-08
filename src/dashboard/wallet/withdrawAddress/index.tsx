@@ -1,25 +1,25 @@
 import {
   Button,
-  createStyles,
   Grid,
-  makeStyles,
-  Theme,
-  Typography,
+  Typography
 } from "@material-ui/core";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import React, { ReactElement, useState } from "react";
-import { satsToCoinsStr } from "../../common/currencyUtil";
-import { BOLTZ_ERROR_MESSAGES, getErrorMsg } from "../../common/errorUtil";
-import ButtonWithLoading from "../../common/buttonWithLoading";
-import QrCode from "../../common/qrCode";
-import { Fees } from "../../models/BoltzFees";
-import { CreateReverseSwapResponse } from "../../models/CreateReverseSwapResponse";
-import { GetServiceInfoResponse } from "../../models/GetServiceInfoResponse";
-import Address from "./address";
-import BoltzFeeInfo from "./boltzFeeInfo";
-import ErrorMessage from "./errorMessage";
-import { withdraw } from "./walletUtil";
-import WarningMessage from "./WarningMessage";
+import { satsToCoinsStr } from "../../../common/currencyUtil";
+import { BOLTZ_ERROR_MESSAGES, getErrorMsg } from "../../../common/errorUtil";
+import ButtonWithLoading from "../../../common/buttonWithLoading";
+import QrCode from "../../../common/qrCode";
+import { Fees } from "../../../models/BoltzFees";
+import { CreateReverseSwapResponse } from "../../../models/CreateReverseSwapResponse";
+import { GetServiceInfoResponse } from "../../../models/GetServiceInfoResponse";
+import Address from "../address";
+import BoltzFeeInfo from "../boltzFeeInfo";
+import ErrorMessage from "../errorMessage";
+import { withdraw } from "../walletUtil";
+import WarningMessage from "../warningMessage";
+
+//styles
+import { ButtonContainer } from "./styles";
 
 type WithdrawAddressProps = {
   currency: string;
@@ -30,17 +30,6 @@ type WithdrawAddressProps = {
   currencyFullName?: string;
   initialAddress?: string;
 };
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    row: {
-      padding: `${theme.spacing(2)}px 0px`,
-    },
-    buttonContainer: {
-      marginTop: 1,
-    },
-  })
-);
 
 const WithdrawAddress = (props: WithdrawAddressProps): ReactElement => {
   const {
@@ -58,7 +47,6 @@ const WithdrawAddress = (props: WithdrawAddressProps): ReactElement => {
   const [withdrawing, setWithdrawing] = useState(false);
   const [error, setError] = useState("");
   const [warning, setWarning] = useState("");
-  const classes = useStyles();
 
   const errorHandler = (err: any) => {
     setWithdrawing(false);
@@ -127,12 +115,11 @@ const WithdrawAddress = (props: WithdrawAddressProps): ReactElement => {
             setAddress={setAddress}
           />
           <BoltzFeeInfo fees={fees} currency={currency} amount={amount} />
-          <Grid
+          <ButtonContainer
             item
             container
             justify="center"
             spacing={4}
-            className={classes.buttonContainer}
           >
             <Grid item>
               <Button
@@ -151,7 +138,7 @@ const WithdrawAddress = (props: WithdrawAddressProps): ReactElement => {
                 onClick={handleWithdrawal}
               />
             </Grid>
-          </Grid>
+          </ButtonContainer>
           {!!error && (
             <ErrorMessage details={error} mainMessage="Failed to withdraw" />
           )}

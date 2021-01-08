@@ -15,7 +15,7 @@ import Address from "../address";
 import BoltzFeeInfo from "../boltzFeeInfo";
 import CheckBoltzTransactionStatus from "../checkBoltzStatus";
 import ErrorMessage from "../errorMessage";
-import WarningMessage from "../WarningMessage";
+import WarningMessage from "../warningMessage";
 
 //styles
 import { Row } from  "./styles";

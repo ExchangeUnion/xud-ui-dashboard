@@ -13,8 +13,8 @@ import BalanceSummary from "../balanceSummary";
 import Deposit from "../deposit";
 import LimitsSummary from "../limitsSummary";
 import WalletItemHeader from "../walletItemHeader";
-import WalletTransactionButton from "../WalletTransactionButton";
-import Withdraw from "../Withdraw";
+import WalletTransactionButton from "../walletTransactionButton";
+import Withdraw from "../withdraw";
 
 //styles
 import {

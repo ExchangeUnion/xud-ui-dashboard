@@ -28,7 +28,7 @@ import Console from "./console";
 import MenuItem, { MenuItemProps } from "./menu/menuItem";
 import Overview from "./overview";
 import Tradehistory from "./tradehistory";
-import Wallets from "./wallet/Wallets";
+import Wallets from "./wallet/wallets";
 
 export const drawerWidth = 200;
 

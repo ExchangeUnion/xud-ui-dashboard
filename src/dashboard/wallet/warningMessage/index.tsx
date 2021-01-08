@@ -1,39 +1,26 @@
 import {
-  Card,
-  createStyles,
   Grid,
-  makeStyles,
-  Theme,
-  Typography,
+  Typography
 } from "@material-ui/core";
 import WarningIcon from "@material-ui/icons/Warning";
 import React, { ReactElement } from "react";
+
+//styles
+import {
+  StyledWarningMessage,
+  IconContainer
+} from "./styles";
 
 type WarningMessageProps = {
   message: string;
 };
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    warningMessage: {
-      backgroundColor: theme.palette.warning.dark,
-      color: theme.palette.warning.contrastText,
-      marginBottom: theme.spacing(2),
-      padding: theme.spacing(1),
-    },
-    iconContainer: {
-      display: "flex",
-    },
-  })
-);
-
 const WarningMessage = (props: WarningMessageProps): ReactElement => {
   const { message } = props;
-  const classes = useStyles();
 
   return (
     <Grid item>
-      <Card elevation={0} className={classes.warningMessage}>
+      <StyledWarningMessage elevation={0}>
         <Grid
           item
           container
@@ -42,16 +29,16 @@ const WarningMessage = (props: WarningMessageProps): ReactElement => {
           alignItems="center"
           wrap="nowrap"
         >
-          <Grid item className={classes.iconContainer}>
+          <IconContainer item>
             <WarningIcon fontSize="small" />
-          </Grid>
+          </IconContainer>
           <Grid item>
             <Typography variant="body2" align="center">
               {message}
             </Typography>
           </Grid>
         </Grid>
-      </Card>
+      </StyledWarningMessage>
     </Grid>
   );
 };
