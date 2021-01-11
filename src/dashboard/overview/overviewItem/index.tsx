@@ -97,7 +97,7 @@ const OverviewItem = (props: OverviewItemProps): ReactElement => {
           >
             <StatusDot isServiceReady={isServiceReady(status)} />
             <Typography component="span" variant="body1" noWrap>
-              {props.status.service} info
+              {props.status.service}
             </Typography>
           </Grid>
           <Grid container item justify="flex-end">
