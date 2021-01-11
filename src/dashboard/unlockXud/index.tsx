@@ -1,37 +1,26 @@
 import {
-  createStyles,
   FormControl,
   Grid,
   IconButton,
   InputAdornment,
   InputLabel,
-  makeStyles,
   OutlinedInput,
-  Theme,
   Typography,
 } from "@material-ui/core";
 import React, { ReactElement, useState } from "react";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
-import ButtonWithLoading from "../common/buttonWithLoading";
-import api from "../api";
-import { getErrorMsg, XUD_ERROR_MESSAGES } from "../common/errorUtil";
+import ButtonWithLoading from "../../common/buttonWithLoading";
+import api from "../../api";
+import { getErrorMsg, XUD_ERROR_MESSAGES } from "../../common/errorUtil";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    container: {
-      height: "50vh",
-      maxHeight: 500,
-    },
-    errorMessageContainer: {
-      minHeight: 50,
-      marginTop: theme.spacing(2),
-    },
-  })
-);
+//styles
+import {
+  Container,
+  ErrorMessageContainer
+} from "./styles";
 
 const UnlockXud = (): ReactElement => {
-  const classes = useStyles();
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -63,7 +52,7 @@ const UnlockXud = (): ReactElement => {
         }
       }}
     >
-      <Grid container justify="space-around" className={classes.container}>
+      <Container container justify="space-around">
         <Grid item container justify="center" alignItems="center">
           <FormControl variant="outlined">
             <InputLabel htmlFor={passwordInputId}>Password</InputLabel>
@@ -105,12 +94,11 @@ const UnlockXud = (): ReactElement => {
               onClick={unlock}
             />
           </Grid>
-          <Grid
+          <ErrorMessageContainer
             item
             container
             direction="column"
             alignItems="center"
-            className={classes.errorMessageContainer}
           >
             {!!error && (
               <>
@@ -126,9 +114,9 @@ const UnlockXud = (): ReactElement => {
                 </Typography>
               </>
             )}
-          </Grid>
+          </ErrorMessageContainer>
         </Grid>
-      </Grid>
+      </Container>
     </form>
   );
 };

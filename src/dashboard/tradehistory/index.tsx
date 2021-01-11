@@ -24,7 +24,7 @@ import { OrderRole } from "../../enums";
 import { Trade } from "../../models/Trade";
 import { TradehistoryResponse } from "../../models/TradehistoryResponse";
 import DashboardContent, { DashboardContentState } from "../DashboardContent";
-import ViewDisabled from "../ViewDisabled";
+import ViewDisabled from "../viewDisabled";
 import TradehistoryDownload from "./tradehistoryDownload";
 
 //styles

@@ -1,6 +1,5 @@
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { createMuiTheme, Theme, withStyles } from "@material-ui/core/styles";
-import { ThemeProvider as ThemeProviderM } from "@material-ui/styles";
 import { ThemeProvider } from "styled-components";
 import React, { ReactElement } from "react";
 import {
@@ -11,7 +10,7 @@ import {
 } from "react-router-dom";
 import ConnectionFailed from "./common/connectionFailed";
 import NotFound from "./common/notFound";
-import Dashboard from "./dashboard/Dashboard";
+import Dashboard from "./dashboard";
 import { Path } from "./router/Path";
 
 const darkTheme = createMuiTheme({
@@ -46,26 +45,24 @@ const GlobalCss = withStyles((theme: Theme) => {
 function App(): ReactElement {
   return (
     <ThemeProvider theme={darkTheme}>
-      <ThemeProviderM theme={darkTheme}>
-        <CssBaseline />
-        <GlobalCss />
-        <Router>
-          <Switch>
-            <Route path={Path.CONNECTION_FAILED}>
-              <ConnectionFailed />
-            </Route>
-            <Route path={Path.DASHBOARD}>
-              <Dashboard />
-            </Route>
-            <Route exact path={Path.HOME}>
-              <Redirect to={Path.DASHBOARD} />
-            </Route>
-            <Route>
-              <NotFound />
-            </Route>
-          </Switch>
-        </Router>
-      </ThemeProviderM>
+      <CssBaseline />
+      <GlobalCss />
+      <Router>
+        <Switch>
+          <Route path={Path.CONNECTION_FAILED}>
+            <ConnectionFailed />
+          </Route>
+          <Route path={Path.DASHBOARD}>
+            <Dashboard />
+          </Route>
+          <Route exact path={Path.HOME}>
+            <Redirect to={Path.DASHBOARD} />
+          </Route>
+          <Route>
+            <NotFound />
+          </Route>
+        </Switch>
+      </Router>
     </ThemeProvider>
   );
 }

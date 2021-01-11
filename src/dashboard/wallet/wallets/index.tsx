@@ -8,7 +8,7 @@ import PageCircularProgress from "../../../common/pageCircularProgress";
 import { GetbalanceResponse } from "../../../models/GetbalanceResponse";
 import { TradinglimitsResponse } from "../../../models/TradinglimitsResponse";
 import DashboardContent, { DashboardContentState } from "../../DashboardContent";
-import ViewDisabled from "../../ViewDisabled";
+import ViewDisabled from "../../viewDisabled";
 import WalletItem from "../walletItem";
 
 //styles

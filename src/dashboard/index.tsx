@@ -1,8 +1,4 @@
-import { Button, Grid, Tooltip, Typography } from "@material-ui/core";
-import Box from "@material-ui/core/Box";
-import Drawer from "@material-ui/core/Drawer";
-import List from "@material-ui/core/List";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import { Box, Grid, Tooltip } from "@material-ui/core";
 import AccountBalanceWalletOutlinedIcon from "@material-ui/icons/AccountBalanceWalletOutlined";
 import CachedIcon from "@material-ui/icons/Cached";
 import HistoryIcon from "@material-ui/icons/History";
@@ -30,34 +26,16 @@ import Overview from "./overview";
 import Tradehistory from "./tradehistory";
 import Wallets from "./wallet/wallets";
 
-export const drawerWidth = 200;
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    drawerPaper: {
-      width: drawerWidth,
-      justifyContent: "space-between",
-    },
-    menuContainer: {
-      width: "100%",
-    },
-    header: {
-      padding: "16px",
-    },
-    drawerButton: {
-      margin: theme.spacing(2),
-    },
-    content: {
-      marginLeft: drawerWidth,
-      backgroundColor: theme.palette.background.default,
-      padding: theme.spacing(3),
-      height: "100vh",
-    },
-  })
-);
+//styles
+import {
+  DrawerPaper,
+  MenuContainer,
+  Header,
+  DrawerButton,
+  Content
+} from "./styles";
 
 const Dashboard = (): ReactElement => {
-  const classes = useStyles();
   const history = useHistory();
   const { path } = useRouteMatch();
   const [syncInProgress, setSyncInProgress] = useState(false);
@@ -138,23 +116,19 @@ const Dashboard = (): ReactElement => {
 
   return (
     <Box>
-      <Drawer
+      <DrawerPaper
         variant="permanent"
-        classes={{
-          paper: classes.drawerPaper,
-        }}
         anchor="left"
       >
         <Grid container item>
-          <Typography
-            className={classes.header}
+          <Header
             variant="overline"
             component="p"
             color="textSecondary"
           >
             XUD UI
-          </Typography>
-          <List className={classes.menuContainer}>
+          </Header>
+          <MenuContainer>
             {menuItems.map((item) => (
               <MenuItem
                 path={item.path}
@@ -167,23 +141,22 @@ const Dashboard = (): ReactElement => {
                 tooltipTextRows={menuItemTooltipMsg}
               />
             ))}
-          </List>
+          </MenuContainer>
         </Grid>
         {isElectron() && (
           <Tooltip title="Disconnect from xud-docker">
-            <Button
+            <DrawerButton
               size="small"
               startIcon={<CachedIcon />}
               variant="outlined"
-              className={classes.drawerButton}
               onClick={disconnect}
             >
               Disconnect
-            </Button>
+            </DrawerButton>
           </Tooltip>
         )}
-      </Drawer>
-      <main className={classes.content}>
+      </DrawerPaper>
+      <Content>
         <Switch>
           {menuItems.map((item) => (
             <Route exact path={`${path}${item.path}`} key={item.text}>
@@ -197,7 +170,7 @@ const Dashboard = (): ReactElement => {
             <NotFound />
           </Route>
         </Switch>
-      </main>
+      </Content>
     </Box>
   );
 };

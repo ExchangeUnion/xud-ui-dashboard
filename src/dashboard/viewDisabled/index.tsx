@@ -1,35 +1,25 @@
 import {
-  createStyles,
   Grid,
-  makeStyles,
-  Theme,
-  Typography,
+  Typography
 } from "@material-ui/core";
 import ReportProblemOutlinedIcon from "@material-ui/icons/ReportProblemOutlined";
 import React, { ReactElement } from "react";
-import { DashboardContentState } from "./DashboardContent";
-import UnlockXud from "./UnlockXud";
+import { DashboardContentState } from "../DashboardContent";
+import UnlockXud from "../unlockXud";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    row: {
-      padding: theme.spacing(3),
-    },
-  })
-);
+//styles
+import { Row } from "./styles";
 
 function ViewDisabled(props: DashboardContentState): ReactElement {
-  const classes = useStyles();
   const { xudLocked, xudStatus } = props;
   return (
     <Grid container direction="column" alignItems="center" justify="center">
-      <Grid
+      <Row
         container
         item
         alignItems="center"
         justify="center"
         spacing={2}
-        className={classes.row}
       >
         <Grid item>
           <Grid item container alignItems="center">
@@ -41,8 +31,8 @@ function ViewDisabled(props: DashboardContentState): ReactElement {
             {xudLocked ? "XUD is locked" : "XUD is not ready"}
           </Typography>
         </Grid>
-      </Grid>
-      <Grid container item justify="center" className={classes.row}>
+      </Row>
+      <Row container item justify="center">
         {xudLocked ? (
           <UnlockXud />
         ) : (
@@ -52,7 +42,7 @@ function ViewDisabled(props: DashboardContentState): ReactElement {
             </Typography>
           </Grid>
         )}
-      </Grid>
+      </Row>
     </Grid>
   );
 }
