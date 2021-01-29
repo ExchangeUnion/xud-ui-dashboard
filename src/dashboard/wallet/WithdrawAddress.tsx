@@ -126,7 +126,12 @@ const WithdrawAddress = (props: WithdrawAddressProps): ReactElement => {
             readOnly={false}
             setAddress={setAddress}
           />
-          <BoltzFeeInfo fees={fees} currency={currency} amount={amount} />
+          <BoltzFeeInfo
+            fees={fees}
+            currency={currency}
+            amount={amount}
+            isReverse
+          />
           <Grid
             item
             container
