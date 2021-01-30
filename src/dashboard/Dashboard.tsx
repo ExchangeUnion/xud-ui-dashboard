@@ -8,6 +8,7 @@ import CachedIcon from "@material-ui/icons/Cached";
 import HistoryIcon from "@material-ui/icons/History";
 import RemoveRedEyeOutlinedIcon from "@material-ui/icons/RemoveRedEyeOutlined";
 import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
+import TrendingUpIcon from "@material-ui/icons/TrendingUp";
 import React, { ReactElement, useEffect, useState } from "react";
 import {
   Redirect,
@@ -27,6 +28,7 @@ import { Path } from "../router/Path";
 import Console from "./console/Console";
 import MenuItem, { MenuItemProps } from "./menu/MenuItem";
 import Overview from "./overview/Overview";
+import Trade from "./trade/Trade";
 import Tradehistory from "./tradehistory/Tradehistory";
 import Wallets from "./wallet/Wallets";
 
@@ -52,6 +54,7 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.background.default,
       padding: theme.spacing(3),
       height: "100vh",
+      display: "flex",
     },
   })
 );
@@ -72,16 +75,22 @@ const Dashboard = (): ReactElement => {
       isFallback: true,
     },
     {
+      path: Path.TRADE,
+      text: "Trade",
+      component: Trade,
+      icon: TrendingUpIcon,
+    },
+    {
+      path: Path.TRADEHISTORY,
+      text: "Trade History",
+      component: Tradehistory,
+      icon: HistoryIcon,
+    },
+    {
       path: Path.WALLETS,
       text: "Wallets",
       component: Wallets,
       icon: AccountBalanceWalletOutlinedIcon,
-    },
-    {
-      path: Path.TRADEHISTORY,
-      text: "Tradehistory",
-      component: Tradehistory,
-      icon: HistoryIcon,
     },
     {
       path: Path.CONSOLE,

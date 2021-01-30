@@ -1,4 +1,3 @@
-import { OrderSide } from "../enums";
 import { NodeInfo } from "./NodeInfo";
 
 export type Order = {
@@ -9,7 +8,7 @@ export type Order = {
   node_identifier: NodeInfo;
   local_id: string;
   created_at: string;
-  side: OrderSide;
+  side: string;
   is_own_order: boolean;
   hold: number;
 };

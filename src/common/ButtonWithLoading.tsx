@@ -12,6 +12,9 @@ type ButtonWithLoadingProps = {
   disabled: boolean;
   loading: boolean;
   submitButton?: boolean;
+  fullWidth?: boolean;
+  size?: "small" | "medium" | "large";
+  color?: "primary" | "secondary";
 };
 
 const useStyles = makeStyles(() =>
@@ -31,17 +34,28 @@ const useStyles = makeStyles(() =>
 
 const ButtonWithLoading = (props: ButtonWithLoadingProps): ReactElement => {
   const classes = useStyles();
-  const { onClick, text, disabled, loading, submitButton } = props;
+  const {
+    onClick,
+    text,
+    disabled,
+    loading,
+    submitButton,
+    fullWidth,
+    size,
+    color,
+  } = props;
 
   return (
     <div className={classes.buttonWrapper}>
       <Button
         type={submitButton ? "submit" : "button"}
-        color="primary"
+        color={color || "primary"}
         disableElevation
         variant="contained"
         onClick={onClick}
         disabled={disabled}
+        fullWidth={fullWidth}
+        size={size}
       >
         {text}
       </Button>
