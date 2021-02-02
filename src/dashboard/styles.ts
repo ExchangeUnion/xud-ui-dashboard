@@ -29,7 +29,7 @@ type DrawerButtonType = {
 
 //styled
 export const DrawerPaper = styled(Drawer)<DrawerPaperType>`
-  & > .MuiDialog-container > .MuiPaper-root {
+  & > .MuiPaper-root {
     width: ${drawerWidth}px;
     justify-content: space-between;
   }
