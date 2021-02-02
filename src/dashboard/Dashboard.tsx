@@ -28,6 +28,7 @@ import { Path } from "../router/Path";
 import Console from "./console/Console";
 import MenuItem, { MenuItemProps } from "./menu/MenuItem";
 import Overview from "./overview/Overview";
+// import SetupWarning from "./SetupWarning";
 import Trade from "./trade/Trade";
 import Tradehistory from "./tradehistory/Tradehistory";
 import Wallets from "./wallet/Wallets";
@@ -57,6 +58,7 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(3),
       height: "100vh",
       display: "flex",
+      flexDirection: "column",
     },
   })
 );
@@ -211,6 +213,9 @@ const Dashboard = (): ReactElement => {
         </Grid>
       </Drawer>
       <main className={classes.content}>
+        {/* <Grid item container>
+          {<SetupWarning />}
+        </Grid> */}
         <Switch>
           {menuItems.map((item) => (
             <Route exact path={`${path}${item.path}`} key={item.text}>

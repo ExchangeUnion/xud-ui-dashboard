@@ -13,13 +13,13 @@ import ErrorMessage from "../../common/ErrorMessage";
 import { getErrorMsg } from "../../common/errorUtil";
 import Loader from "../../common/Loader";
 import QrCode from "../../common/QrCode";
+import WarningMessage from "../../common/WarningMessage";
 import { DepositResponse } from "../../models/DepositResponse";
 import { GetServiceInfoResponse } from "../../models/GetServiceInfoResponse";
 import { Info } from "../../models/Info";
 import Address from "./Address";
 import BoltzFeeInfo from "./BoltzFeeInfo";
 import CheckBoltzTransactionStatus from "./CheckBoltzTransactionStatus";
-import WarningMessage from "./WarningMessage";
 
 type DepositProps = {
   currency: string;
