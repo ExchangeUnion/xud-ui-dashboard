@@ -7,8 +7,12 @@ import {
 } from "@material-ui/core";
 import ReportProblemOutlinedIcon from "@material-ui/icons/ReportProblemOutlined";
 import React, { ReactElement } from "react";
-import { DashboardContentState } from "./DashboardContent";
 import UnlockXud from "./UnlockXud";
+
+export type ViewDisabledProps = {
+  xudLocked?: boolean;
+  xudStatus?: string;
+};
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -18,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-function ViewDisabled(props: DashboardContentState): ReactElement {
+function ViewDisabled(props: ViewDisabledProps): ReactElement {
   const classes = useStyles();
   const { xudLocked, xudStatus } = props;
   return (

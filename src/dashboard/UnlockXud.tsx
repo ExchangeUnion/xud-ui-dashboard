@@ -1,21 +1,15 @@
 import {
   createStyles,
-  FormControl,
   Grid,
-  IconButton,
-  InputAdornment,
-  InputLabel,
   makeStyles,
-  OutlinedInput,
   Theme,
   Typography,
 } from "@material-ui/core";
 import React, { ReactElement, useState } from "react";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import ButtonWithLoading from "../common/ButtonWithLoading";
 import api from "../api";
 import { getErrorMsg, XUD_ERROR_MESSAGES } from "../common/errorUtil";
+import Password from "../common/Password";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -34,9 +28,7 @@ const UnlockXud = (): ReactElement => {
   const classes = useStyles();
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [queryInProgress, setQueryInProgress] = useState(false);
-  const passwordInputId = "xudPassword";
 
   const unlock = () => {
     setQueryInProgress(true);
@@ -65,30 +57,13 @@ const UnlockXud = (): ReactElement => {
     >
       <Grid container justify="space-around" className={classes.container}>
         <Grid item container justify="center" alignItems="center">
-          <FormControl variant="outlined">
-            <InputLabel htmlFor={passwordInputId}>Password</InputLabel>
-            <OutlinedInput
-              id={passwordInputId}
-              labelWidth={70}
-              value={password}
-              onChange={(event) => {
-                setError("");
-                setPassword(event.target.value);
-              }}
-              type={showPassword ? "text" : "password"}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={() => setShowPassword(!showPassword)}
-                    edge="end"
-                  >
-                    {showPassword ? <Visibility /> : <VisibilityOff />}
-                  </IconButton>
-                </InputAdornment>
-              }
-            />
-          </FormControl>
+          <Password
+            value={password}
+            onChange={(event) => {
+              setError("");
+              setPassword(event.target.value);
+            }}
+          />
         </Grid>
         <Grid
           item

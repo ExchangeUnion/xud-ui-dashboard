@@ -31,6 +31,8 @@ import Overview from "./overview/Overview";
 import Trade from "./trade/Trade";
 import Tradehistory from "./tradehistory/Tradehistory";
 import Wallets from "./wallet/Wallets";
+/* import SettingsIcon from "@material-ui/icons/Settings";
+import Settings from "../settings/Settings"; */
 
 export const drawerWidth = 200;
 
@@ -125,13 +127,17 @@ const Dashboard = (): ReactElement => {
       .pipe(takeUntil(lndsReady$))
       .subscribe({
         next: (status: SetupStatusResponse | null) => {
-          if (status && status.status === "Syncing light clients") {
+          if (status) {
             setSyncInProgress(true);
-            setMenuItemTooltipMsg([
-              "Waiting for initial sync...",
-              `Bitcoin: ${status.details["lndbtc"]}`,
-              `Litecoin: ${status.details["lndltc"]}`,
-            ]);
+            setMenuItemTooltipMsg(
+              status.details
+                ? [
+                    "Waiting for initial sync...",
+                    `Bitcoin: ${status.details["lndbtc"]}`,
+                    `Litecoin: ${status.details["lndltc"]}`,
+                  ]
+                : [status.status]
+            );
           }
         },
         error: () => {
@@ -178,19 +184,31 @@ const Dashboard = (): ReactElement => {
             ))}
           </List>
         </Grid>
-        {isElectron() && (
-          <Tooltip title="Disconnect from xud-docker">
-            <Button
-              size="small"
-              startIcon={<CachedIcon />}
-              variant="outlined"
-              className={classes.drawerButton}
-              onClick={disconnect}
-            >
-              Disconnect
-            </Button>
-          </Tooltip>
-        )}
+        <Grid container item direction="column" justify="flex-end">
+          {/* <Grid item container>
+            <MenuItem
+              path={Path.SETTINGS}
+              text={"Settings"}
+              component={Settings}
+              icon={SettingsIcon}
+            />
+          </Grid> */}
+          {isElectron() && (
+            <Grid item container justify="center">
+              <Tooltip title="Disconnect from xud-docker" placement="top">
+                <Button
+                  size="small"
+                  startIcon={<CachedIcon />}
+                  variant="outlined"
+                  className={classes.drawerButton}
+                  onClick={disconnect}
+                >
+                  Disconnect
+                </Button>
+              </Tooltip>
+            </Grid>
+          )}
+        </Grid>
       </Drawer>
       <main className={classes.content}>
         <Switch>
@@ -199,6 +217,9 @@ const Dashboard = (): ReactElement => {
               {item.component}
             </Route>
           ))}
+          {/* <Route path={`${path}${Path.SETTINGS}`}>
+            <Settings />
+          </Route> */}
           <Route exact path={path}>
             <Redirect to={`${path}${Path.OVERVIEW}`} />
           </Route>

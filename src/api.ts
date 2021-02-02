@@ -1,24 +1,26 @@
 import { from, fromEvent, Observable, of, throwError } from "rxjs";
 import { catchError, mergeMap } from "rxjs/operators";
-import { isElectron, sendMessageToParent } from "./common/appUtil";
+import io from "socket.io-client";
+import { logError } from "./common/appUtil";
+import { BackupInfo } from "./models/BackupInfo";
 import { CreateReverseSwapRequest } from "./models/CreateReverseSwapRequest";
 import { CreateReverseSwapResponse } from "./models/CreateReverseSwapResponse";
 import { DepositResponse } from "./models/DepositResponse";
 import { GetbalanceResponse } from "./models/GetbalanceResponse";
+import { GetMnemonicResponse } from "./models/GetMnemonicResponse";
 import { GetServiceInfoResponse } from "./models/GetServiceInfoResponse";
 import { Info } from "./models/Info";
+import { ListordersParams } from "./models/ListordersParams";
+import { ListordersResponse } from "./models/ListordersResponse";
+import { ListpairsResponse } from "./models/ListpairsResponse";
+import { OrderBookParams } from "./models/OrderBookParams";
+import { OrderBookResponse } from "./models/OrderBookResponse";
+import { PlaceOrderParams } from "./models/PlaceOrderParams";
+import { RemoveOrderParams } from "./models/RemoveOrderParams";
 import { SetupStatusResponse } from "./models/SetupStatusResponse";
 import { Status } from "./models/Status";
 import { TradehistoryResponse } from "./models/TradehistoryResponse";
 import { TradinglimitsResponse } from "./models/TradinglimitsResponse";
-import io from "socket.io-client";
-import { ListpairsResponse } from "./models/ListpairsResponse";
-import { PlaceOrderParams } from "./models/PlaceOrderParams";
-import { ListordersResponse } from "./models/ListordersResponse";
-import { ListordersParams } from "./models/ListordersParams";
-import { RemoveOrderParams } from "./models/RemoveOrderParams";
-import { OrderBookParams } from "./models/OrderBookParams";
-import { OrderBookResponse } from "./models/OrderBookResponse";
 
 const url =
   process.env.NODE_ENV === "development"
@@ -28,15 +30,13 @@ const path = `${url}/api/v1`;
 const xudPath = `${path}/xud`;
 const boltzPath = `${path}/boltz`;
 
-const logError = (url: string, err: string) => {
-  if (isElectron()) {
-    const errorMsg = typeof err === "string" ? err : JSON.stringify(err);
-    sendMessageToParent(`logError: requestUrl: ${url}; error: ${errorMsg}`);
-  }
+const logErr = (url: string, err: string): void => {
+  const errorMsg = typeof err === "string" ? err : JSON.stringify(err);
+  logError(`requestUrl: ${url}; error: ${errorMsg}`);
 };
 
 const logAndThrow = (url: string, err: string) => {
-  logError(url, err);
+  logErr(url, err);
   throw err;
 };
 
@@ -101,7 +101,7 @@ const fetchStreamResponse = <T>(url: string): Observable<T | null> => {
         reader.read().then(processText);
       })
       .catch((e) => {
-        logError(url, e);
+        logErr(url, e);
         subscriber.error(e);
       });
   });
@@ -214,6 +214,32 @@ export default {
       undefined,
       "POST"
     );
+  },
+
+  changePassword$(newPassword: string, oldPassword: string): Observable<void> {
+    return fetchJsonResponse(
+      `${xudPath}/changepass`,
+      JSON.stringify({ newPassword, oldPassword }),
+      undefined,
+      "POST"
+    );
+  },
+
+  getMnemonic$(): Observable<GetMnemonicResponse> {
+    return fetchJsonResponse(`${xudPath}/getmnemonic`);
+  },
+
+  updateBackupDirectory$(location: string): Observable<void> {
+    return fetchJsonResponse(
+      `${path}/backup`,
+      JSON.stringify({ location }),
+      undefined,
+      "PUT"
+    );
+  },
+
+  getBackupInfo$(): Observable<BackupInfo> {
+    return fetchJsonResponse(`${path}/info`);
   },
 
   sio: {

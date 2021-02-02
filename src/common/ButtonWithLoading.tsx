@@ -9,8 +9,8 @@ import React, { ReactElement } from "react";
 type ButtonWithLoadingProps = {
   onClick: () => void;
   text: string;
-  disabled: boolean;
-  loading: boolean;
+  disabled?: boolean;
+  loading?: boolean;
   submitButton?: boolean;
   fullWidth?: boolean;
   size?: "small" | "medium" | "large";

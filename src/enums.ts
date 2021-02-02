@@ -24,3 +24,8 @@ export enum OrderOwner {
   OWN = 1,
   PEER = 2,
 }
+
+export enum ConnectionType {
+  LOCAL = "local",
+  REMOTE = "remote",
+}
