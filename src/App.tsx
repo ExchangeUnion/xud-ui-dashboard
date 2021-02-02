@@ -1,6 +1,7 @@
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { createMuiTheme, Theme, withStyles } from "@material-ui/core/styles";
 import { ThemeProvider } from "styled-components";
+import { ThemeProvider as MaterialThemeProvider } from "@material-ui/styles";
 import React, { ReactElement } from "react";
 import {
   BrowserRouter as Router,
@@ -45,24 +46,26 @@ const GlobalCss = withStyles((theme: Theme) => {
 function App(): ReactElement {
   return (
     <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
-      <GlobalCss />
-      <Router>
-        <Switch>
-          <Route path={Path.CONNECTION_FAILED}>
-            <ConnectionFailed />
-          </Route>
-          <Route path={Path.DASHBOARD}>
-            <Dashboard />
-          </Route>
-          <Route exact path={Path.HOME}>
-            <Redirect to={Path.DASHBOARD} />
-          </Route>
-          <Route>
-            <NotFound />
-          </Route>
-        </Switch>
-      </Router>
+      <MaterialThemeProvider theme={darkTheme}>
+        <CssBaseline />
+        <GlobalCss />
+        <Router>
+          <Switch>
+            <Route path={Path.CONNECTION_FAILED}>
+              <ConnectionFailed />
+            </Route>
+            <Route path={Path.DASHBOARD}>
+              <Dashboard />
+            </Route>
+            <Route exact path={Path.HOME}>
+              <Redirect to={Path.DASHBOARD} />
+            </Route>
+            <Route>
+              <NotFound />
+            </Route>
+          </Switch>
+        </Router>
+      </MaterialThemeProvider>
     </ThemeProvider>
   );
 }
