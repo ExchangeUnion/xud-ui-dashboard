@@ -26,7 +26,7 @@ type StatusDotType = {
 type SnackbarType = {
   open: boolean;
   autoHideDuration: number;
-  onClose: any;
+  onClose: () => void;
   anchorOrigin: object;
 }
 

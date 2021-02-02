@@ -12,10 +12,10 @@ type AddressContainerType = {
 }
 
 type AddressFieldType = {
-  fullWidth: any;
+  fullWidth: boolean;
   color: string;
   readOnly: boolean
-  value: any;
+  value: string;
   onChange: any;
   endAdornment: any;
 }

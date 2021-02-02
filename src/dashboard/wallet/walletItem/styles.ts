@@ -20,7 +20,7 @@ type ViewContentType = {
 }
 
 type RowsGroupType = {
-  key?: any;
+  key?: string;
   item: boolean;
   container: boolean;
   direction?: string;

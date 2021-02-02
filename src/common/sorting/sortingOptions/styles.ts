@@ -19,7 +19,7 @@ type SortOptionButtonType = {
   fullWidth: boolean;
   disableRipple: boolean;
   size: string;
-  onClick: any;
+  onClick: () => void;
   key: string;
 }
 

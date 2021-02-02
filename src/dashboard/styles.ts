@@ -24,7 +24,7 @@ type DrawerButtonType = {
   size: string;
   startIcon: ReactElement;
   variant: string;
-  onClick: any;
+  onClick: () => void;
 }
 
 //styled

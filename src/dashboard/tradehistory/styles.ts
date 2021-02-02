@@ -12,7 +12,7 @@ type TableCellType = {
 
 type TableCellIconType = {
   size: string;
-  onClick: any;
+  onClick: () => void;
 }
 
 //styled
