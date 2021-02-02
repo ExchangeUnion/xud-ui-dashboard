@@ -4,13 +4,17 @@ import {
 } from "@material-ui/core";
 import ReportProblemOutlinedIcon from "@material-ui/icons/ReportProblemOutlined";
 import React, { ReactElement } from "react";
-import { DashboardContentState } from "../DashboardContent";
 import UnlockXud from "../unlockXud";
 
 //styles
 import { Row } from "./styles";
 
-function ViewDisabled(props: DashboardContentState): ReactElement {
+export type ViewDisabledProps = {
+  xudLocked?: boolean;
+  xudStatus?: string;
+};
+
+function ViewDisabled(props: ViewDisabledProps): ReactElement {
   const { xudLocked, xudStatus } = props;
   return (
     <Grid container direction="column" alignItems="center" justify="center">

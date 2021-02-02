@@ -52,7 +52,7 @@ class Wallets extends DashboardContent<PropsType, StateType> {
     const balances = this.state.balances?.balances;
 
     return (
-      <>
+      <Grid container direction="column">
         {this.state.xudLocked || this.state.xudNotReady ? (
           <ViewDisabled
             xudLocked={this.state.xudLocked}
@@ -80,7 +80,7 @@ class Wallets extends DashboardContent<PropsType, StateType> {
             )}
           </ItemsContainer>
         )}
-      </>
+      </Grid>
     );
   }
 }

@@ -1,3 +1,4 @@
+import { createStyles, withStyles, WithStyles } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import React, { ReactElement } from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
@@ -7,10 +8,19 @@ import { Status } from "../../models/Status";
 import DashboardContent, { DashboardContentState } from "../DashboardContent";
 import OverviewItem from "./overviewItem";
 
-type PropsType = RouteComponentProps<{ param1: string }>;
+type PropsType = RouteComponentProps<{ param1: string }> &
+  WithStyles<typeof styles>;
 
 type StateType = DashboardContentState & {
   statuses?: Status[];
+};
+
+const styles = () => {
+  return createStyles({
+    wrapper: {
+      overflowY: "auto",
+    },
+  });
 };
 
 class Overview extends DashboardContent<PropsType, StateType> {
@@ -42,8 +52,10 @@ class Overview extends DashboardContent<PropsType, StateType> {
   };
 
   render(): ReactElement {
+    const { classes } = this.props;
+
     return (
-      <Grid container spacing={5}>
+      <Grid container spacing={5} className={classes.wrapper}>
         {this.state.initialLoadCompleted ? (
           this.state.statuses &&
           this.state.statuses
@@ -69,4 +81,4 @@ class Overview extends DashboardContent<PropsType, StateType> {
   }
 }
 
-export default withRouter(Overview);
+export default withRouter(withStyles(styles, { withTheme: true })(Overview));

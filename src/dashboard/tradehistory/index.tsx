@@ -1,15 +1,7 @@
-import {
-  Divider,
-  Grid,
-  Paper,
-  Typography
-} from "@material-ui/core";
-import FileCopyOutlinedIcon from "@material-ui/icons/FileCopyOutlined";
+import { Grid } from "@material-ui/core";
 import React, { ReactElement } from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import api from "../../api";
-import { copyToClipboard } from "../../common/appUtil";
-import CenterEllipsis from "../../common/centerEllipsis";
 import { satsToCoins } from "../../common/currencyUtil";
 import PageCircularProgress from "../../common/pageCircularProgress";
 import SortingOptions, {
@@ -20,6 +12,7 @@ import {
   SortingOrder,
   stableSort,
 } from "../../common/sorting/SortingUtil";
+import Table from "../../common/Table";
 import { OrderRole } from "../../enums";
 import { Trade } from "../../models/Trade";
 import { TradehistoryResponse } from "../../models/TradehistoryResponse";
@@ -28,7 +21,7 @@ import ViewDisabled from "../viewDisabled";
 import TradehistoryDownload from "./tradehistoryDownload";
 
 //styles
-import { TableCell, TableCellIcon} from "./styles";
+import { Content } from './styles';
 
 export type TradeRow = {
   swapHash: string;
@@ -61,17 +54,8 @@ type StateType = DashboardContentState & {
   sortingOrder: SortingOrder;
 };
 
-const getDisplayValue = (
-  row: TradeRow,
-  prop: keyof TradeRow
-): string | number => {
-  return row[prop] instanceof Date
-    ? row[prop].toLocaleString("en-GB")
-    : (row[prop] as string | number);
-};
-
 const getRowId = (row: TradeRow): string => {
-  return row.swapHash ? row.swapHash : row.orderId;
+  return row.swapHash ? row.swapHash : row.orderId + Math.random();
 };
 
 class Tradehistory extends DashboardContent<PropsType, StateType> {
@@ -164,85 +148,28 @@ class Tradehistory extends DashboardContent<PropsType, StateType> {
           />
         ) : this.state.rows?.length ? (
           <>
-            <Grid container component={Paper} direction="column">
+            <Content container direction="column">
               <SortingOptions
                 sortOpts={this.sortOpts}
                 orderBy={this.state.orderBy}
                 sortingOrder={this.state.sortingOrder}
                 onOptionSelected={this.onSortOptionSelect}
               ></SortingOptions>
-              <Grid item container justify="space-between" wrap="nowrap">
-                {this.tableHeaders.map((header) => (
-                  <TableCell
-                    key={header.key}
-                    item
-                    container
-                    xs={header.gridsXs || 2}
-                    xl={header.gridsXl || header.gridsXs || 2}
-                  >
-                    <Typography component="span" variant="body1">
-                      {header.label}
-                    </Typography>
-                  </TableCell>
-                ))}
-              </Grid>
-              <Divider />
-              <Grid item container direction="column">
-                {!!this.state.trades &&
-                  stableSort(
-                    this.state.rows,
-                    getComparator(
-                      this.state.orderBy.sortingOrder ||
-                        this.state.sortingOrder,
-                      this.state.orderBy.prop,
-                      this.state.orderBy.groupBy
-                    )
-                  ).map((row) => (
-                    <Grid
-                      item
-                      container
-                      justify="space-between"
-                      wrap="nowrap"
-                      key={getRowId(row)}
-                    >
-                      {this.tableHeaders.map((column) => (
-                        <TableCell
-                          item
-                          container
-                          xs={column.gridsXs || 2}
-                          xl={column.gridsXl || column.gridsXs || 2}
-                          key={`${getRowId(row)}_${column.key}`}
-                        >
-                          {column.copyIcon && row[column.key] ? (
-                            <Grid
-                              container
-                              item
-                              wrap="nowrap"
-                              alignItems="flex-start"
-                            >
-                              <CenterEllipsis text={row[column.key] + ""} />
-                              <TableCellIcon
-                                size="small"
-                                onClick={() =>
-                                  copyToClipboard(
-                                    getDisplayValue(row, column.key)
-                                  )
-                                }
-                              >
-                                <FileCopyOutlinedIcon fontSize="inherit" />
-                              </TableCellIcon>
-                            </Grid>
-                          ) : (
-                            <Typography variant="body2" component="span">
-                              {getDisplayValue(row, column.key)}
-                            </Typography>
-                          )}
-                        </TableCell>
-                      ))}
-                    </Grid>
-                  ))}
-              </Grid>
-            </Grid>
+              <Table
+                headers={this.tableHeaders}
+                rows={stableSort(
+                  this.state.rows,
+                  getComparator(
+                    this.state.orderBy.sortingOrder || this.state.sortingOrder,
+                    this.state.orderBy.prop,
+                    this.state.orderBy.groupBy
+                  )
+                )}
+                getRowId={getRowId}
+                defaultGridXs={2}
+                defaultGridXl={2}
+              />
+            </Content>
             <TradehistoryDownload
               headers={this.csvHeaders}
               rows={this.state.rows}

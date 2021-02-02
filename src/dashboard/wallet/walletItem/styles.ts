@@ -30,8 +30,7 @@ type RowsGroupType = {
 
 //styled
 export const Card = styled($Card)`
-  height: 100%;
-  min-height: 446px;
+  height: 446px;
   min-width: 514px;
 `;
 

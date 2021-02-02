@@ -10,7 +10,7 @@ import {
 } from "rxjs";
 import { exhaustMap } from "rxjs/operators";
 import api from "../api";
-import { XUD_NOT_READY } from "../constants";
+import { isXudLocked, isXudReady } from "../common/serviceUtil";
 import { Status } from "../models/Status";
 import { Path } from "../router/Path";
 
@@ -72,10 +72,8 @@ abstract class DashboardContent<
     return api.statusByService$("xud").pipe(
       exhaustMap((resp: Status) => {
         this.setState({
-          xudLocked: resp.status.startsWith("Wallet locked"),
-          xudNotReady: XUD_NOT_READY.some((status) =>
-            resp.status.startsWith(status)
-          ),
+          xudLocked: isXudLocked(resp),
+          xudNotReady: !isXudReady(resp),
           xudStatus: resp.status,
         });
         return of(resp);

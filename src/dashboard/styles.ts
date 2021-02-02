@@ -52,4 +52,6 @@ export const Content = styled.main`
   background-color: ${p => p.theme.palette.background.default};
   padding: ${p => p.theme.spacing(3)}px;
   height: 100vh;
+  display: flex;
+  flex-direction: column;
 `;

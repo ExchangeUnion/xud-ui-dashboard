@@ -6,6 +6,7 @@ import {
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import React, { ReactElement, useState } from "react";
 import { satsToCoinsStr } from "../../../common/currencyUtil";
+import ErrorMessage from "../../../common/ErrorMessage";
 import { BOLTZ_ERROR_MESSAGES, getErrorMsg } from "../../../common/errorUtil";
 import ButtonWithLoading from "../../../common/buttonWithLoading";
 import QrCode from "../../../common/qrCode";
@@ -14,9 +15,8 @@ import { CreateReverseSwapResponse } from "../../../models/CreateReverseSwapResp
 import { GetServiceInfoResponse } from "../../../models/GetServiceInfoResponse";
 import Address from "../address";
 import BoltzFeeInfo from "../boltzFeeInfo";
-import ErrorMessage from "../errorMessage";
 import { withdraw } from "../walletUtil";
-import WarningMessage from "../warningMessage";
+import WarningMessage from "../../../common/WarningMessage";
 
 //styles
 import { ButtonContainer } from "./styles";
@@ -114,7 +114,7 @@ const WithdrawAddress = (props: WithdrawAddressProps): ReactElement => {
             readOnly={false}
             setAddress={setAddress}
           />
-          <BoltzFeeInfo fees={fees} currency={currency} amount={amount} />
+          <BoltzFeeInfo fees={fees} currency={currency} amount={amount} isReverse/>
           <ButtonContainer
             item
             container

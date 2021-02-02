@@ -4,6 +4,7 @@ import CachedIcon from "@material-ui/icons/Cached";
 import HistoryIcon from "@material-ui/icons/History";
 import RemoveRedEyeOutlinedIcon from "@material-ui/icons/RemoveRedEyeOutlined";
 import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
+import TrendingUpIcon from "@material-ui/icons/TrendingUp";
 import React, { ReactElement, useEffect, useState } from "react";
 import {
   Redirect,
@@ -23,8 +24,12 @@ import { Path } from "../router/Path";
 import Console from "./console";
 import MenuItem, { MenuItemProps } from "./menu/menuItem";
 import Overview from "./overview";
+// import SetupWarning from "./SetupWarning";
+import Trade from "./trade/Trade";
 import Tradehistory from "./tradehistory";
 import Wallets from "./wallet/wallets";
+/* import SettingsIcon from "@material-ui/icons/Settings";
+import Settings from "../settings/Settings"; */
 
 //styles
 import {
@@ -50,16 +55,22 @@ const Dashboard = (): ReactElement => {
       isFallback: true,
     },
     {
+      path: Path.TRADE,
+      text: "Trade",
+      component: Trade,
+      icon: TrendingUpIcon,
+    },
+    {
+      path: Path.TRADEHISTORY,
+      text: "Trade History",
+      component: Tradehistory,
+      icon: HistoryIcon,
+    },
+    {
       path: Path.WALLETS,
       text: "Wallets",
       component: Wallets,
       icon: AccountBalanceWalletOutlinedIcon,
-    },
-    {
-      path: Path.TRADEHISTORY,
-      text: "Tradehistory",
-      component: Tradehistory,
-      icon: HistoryIcon,
     },
     {
       path: Path.CONSOLE,
@@ -94,13 +105,17 @@ const Dashboard = (): ReactElement => {
       .pipe(takeUntil(lndsReady$))
       .subscribe({
         next: (status: SetupStatusResponse | null) => {
-          if (status && status.status === "Syncing light clients") {
+          if (status) {
             setSyncInProgress(true);
-            setMenuItemTooltipMsg([
-              "Waiting for initial sync...",
-              `Bitcoin: ${status.details["lndbtc"]}`,
-              `Litecoin: ${status.details["lndltc"]}`,
-            ]);
+            setMenuItemTooltipMsg(
+              status.details
+                ? [
+                    "Waiting for initial sync...",
+                    `Bitcoin: ${status.details["lndbtc"]}`,
+                    `Litecoin: ${status.details["lndltc"]}`,
+                  ]
+                : [status.status]
+            );
           }
         },
         error: () => {
@@ -143,26 +158,44 @@ const Dashboard = (): ReactElement => {
             ))}
           </MenuContainer>
         </Grid>
-        {isElectron() && (
-          <Tooltip title="Disconnect from xud-docker">
-            <DrawerButton
-              size="small"
-              startIcon={<CachedIcon />}
-              variant="outlined"
-              onClick={disconnect}
-            >
-              Disconnect
-            </DrawerButton>
-          </Tooltip>
-        )}
+        <Grid container item direction="column" justify="flex-end">
+          {/* <Grid item container>
+            <MenuItem
+              path={Path.SETTINGS}
+              text={"Settings"}
+              component={Settings}
+              icon={SettingsIcon}
+            />
+          </Grid> */}
+          {isElectron() && (
+            <Grid item container justify="center">
+              <Tooltip title="Disconnect from xud-docker" placement="top">
+                <DrawerButton
+                  size="small"
+                  startIcon={<CachedIcon />}
+                  variant="outlined"
+                  onClick={disconnect}
+                >
+                  Disconnect
+                </DrawerButton>
+              </Tooltip>
+            </Grid>
+          )}
+        </Grid>
       </DrawerPaper>
       <Content>
+        {/* <Grid item container>
+          {<SetupWarning />}
+        </Grid> */}
         <Switch>
           {menuItems.map((item) => (
             <Route exact path={`${path}${item.path}`} key={item.text}>
               {item.component}
             </Route>
           ))}
+          {/* <Route path={`${path}${Path.SETTINGS}`}>
+            <Settings />
+          </Route> */}
           <Route exact path={path}>
             <Redirect to={`${path}${Path.OVERVIEW}`} />
           </Route>

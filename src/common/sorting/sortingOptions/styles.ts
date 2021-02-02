@@ -38,7 +38,6 @@ type SortDirIconContainerType = {
 
 //styled
 export const SortIconContainer = styled(Grid)<SortIconContainerType>`
-  padding-right: ${p => p.theme.spacing(2)}px;
   padding-top: ${p => p.theme.spacing(2)}px;
 `;
 

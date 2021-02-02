@@ -1,16 +1,10 @@
 import {
-  FormControl,
   Grid,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
-  Typography,
+  Typography
 } from "@material-ui/core";
 import React, { ReactElement, useState } from "react";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import ButtonWithLoading from "../../common/buttonWithLoading";
+import Password from "../../common/Password";
 import api from "../../api";
 import { getErrorMsg, XUD_ERROR_MESSAGES } from "../../common/errorUtil";
 
@@ -23,9 +17,7 @@ import {
 const UnlockXud = (): ReactElement => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [queryInProgress, setQueryInProgress] = useState(false);
-  const passwordInputId = "xudPassword";
 
   const unlock = () => {
     setQueryInProgress(true);
@@ -54,30 +46,13 @@ const UnlockXud = (): ReactElement => {
     >
       <Container container justify="space-around">
         <Grid item container justify="center" alignItems="center">
-          <FormControl variant="outlined">
-            <InputLabel htmlFor={passwordInputId}>Password</InputLabel>
-            <OutlinedInput
-              id={passwordInputId}
-              labelWidth={70}
-              value={password}
-              onChange={(event) => {
-                setError("");
-                setPassword(event.target.value);
-              }}
-              type={showPassword ? "text" : "password"}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={() => setShowPassword(!showPassword)}
-                    edge="end"
-                  >
-                    {showPassword ? <Visibility /> : <VisibilityOff />}
-                  </IconButton>
-                </InputAdornment>
-              }
-            />
-          </FormControl>
+          <Password
+            value={password}
+            onChange={(event) => {
+              setError("");
+              setPassword(event.target.value);
+            }}
+          />
         </Grid>
         <Grid
           item

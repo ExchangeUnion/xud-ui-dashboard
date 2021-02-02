@@ -9,5 +9,6 @@ type ItemsContainerType = {
 
 //styled
 export const ItemsContainer = styled(Grid)<ItemsContainerType>`
-  padding-bottom: 45px;
+  flex: 1;
+  overflow-y: auto;
 `;

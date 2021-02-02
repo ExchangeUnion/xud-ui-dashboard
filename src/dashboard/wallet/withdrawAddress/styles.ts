@@ -12,4 +12,5 @@ type ButtonContainerType = {
 //styled
 export const ButtonContainer = styled(Grid)<ButtonContainerType>`
   margin-top: 1px;
+  margin-bottom: ${p => p.theme.spacing(2)}px;
 `;

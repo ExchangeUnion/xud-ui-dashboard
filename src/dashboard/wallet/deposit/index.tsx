@@ -3,19 +3,20 @@ import {
   Typography
 } from "@material-ui/core";
 import React, { ReactElement, useEffect, useState } from "react";
-import { Observable, Subject } from "rxjs";
+import { combineLatest, Observable, Subject } from "rxjs";
 import api from "../../../api";
 import { satsToCoinsStr } from "../../../common/currencyUtil";
 import { getErrorMsg } from "../../../common/errorUtil";
 import Loader from "../../../common/loader";
 import QrCode from "../../../common/qrCode";
+import WarningMessage from "../../../common/WarningMessage";
 import { DepositResponse } from "../../../models/DepositResponse";
+import { GetServiceInfoResponse } from "../../../models/GetServiceInfoResponse";
 import { Info } from "../../../models/Info";
 import Address from "../address";
 import BoltzFeeInfo from "../boltzFeeInfo";
 import CheckBoltzTransactionStatus from "../checkBoltzStatus";
-import ErrorMessage from "../errorMessage";
-import WarningMessage from "../warningMessage";
+import ErrorMessage from "../../../common/ErrorMessage";
 
 //styles
 import { Row } from  "./styles";
@@ -55,6 +56,9 @@ const Deposit = (props: DepositProps): ReactElement => {
   const [depositData, setDepositData] = useState<DepositResponse | undefined>(
     undefined
   );
+  const [serviceInfo, setServiceInfo] = useState<
+    GetServiceInfoResponse | undefined
+  >(undefined);
   const [currentBlockHeight, setCurrentBlockHeight] = useState<
     number | undefined
   >(undefined);
@@ -65,9 +69,13 @@ const Deposit = (props: DepositProps): ReactElement => {
 
   useEffect(() => {
     const fetchDepositData = (): void => {
-      api.boltzDeposit$(currency).subscribe({
+      combineLatest([
+        api.boltzDeposit$(currency),
+        api.boltzServiceInfo$(currency),
+      ]).subscribe({
         next: (resp) => {
-          setDepositData(resp);
+          setDepositData(resp[0]);
+          setServiceInfo(resp[1]);
           setFetchingData(false);
         },
         error: (err) => {
@@ -102,7 +110,7 @@ const Deposit = (props: DepositProps): ReactElement => {
   return (
     <>
       {!!error && <ErrorMessage details={error} />}
-      {!!depositData && !!currentBlockHeight && (
+      {!!depositData && !!serviceInfo && !!currentBlockHeight && (
         <>
           {addressAutoUpdated && (
             <WarningMessage message="Address updated due to timeout" />
@@ -110,8 +118,8 @@ const Deposit = (props: DepositProps): ReactElement => {
           {!qrOpen ? (
             <Grid item>
               <Typography variant="body2" align="center">
-                Deposit between {satsToCoinsStr(depositData.limits.minimal)} and{" "}
-                {satsToCoinsStr(depositData.limits.maximal, currency)} in the
+                Deposit between {satsToCoinsStr(serviceInfo.limits.minimal)} and{" "}
+                {satsToCoinsStr(serviceInfo.limits.maximal, currency)} in the
                 following address in the next ~
                 {getTimeString(
                   getAvgMinutesBetweenBlocks(

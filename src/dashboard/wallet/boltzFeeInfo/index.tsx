@@ -17,12 +17,13 @@ type BoltzFeeInfoProps = {
   fees: Fees;
   currency: string;
   amount?: number;
+  isReverse?: boolean;
 };
 
 const BOLTZ_URL = "https://boltz.exchange";
 
 const BoltzFeeInfo = (props: BoltzFeeInfoProps): ReactElement => {
-  const { fees, currency, amount } = props;
+  const { fees, currency, amount, isReverse } = props;
 
   const swapFee = amount
     ? `${satsToCoinsStr((amount * fees.percentage) / 100, currency)} (${
@@ -61,7 +62,12 @@ const BoltzFeeInfo = (props: BoltzFeeInfoProps): ReactElement => {
       <Grid item>
         <Typography variant="body2" align="center" noWrap>
           Boltz swap fee: <strong>{swapFee}</strong> | Miner fee:{" "}
-          <strong>{satsToCoinsStr(fees.miner.normal, currency)}</strong>
+          <strong>
+            {satsToCoinsStr(
+              isReverse ? fees.miner.reverse : fees.miner.normal,
+              currency
+            )}
+          </strong>
         </Typography>
       </Grid>
     </Grid>

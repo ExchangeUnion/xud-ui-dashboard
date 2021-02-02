@@ -9,7 +9,7 @@ type TitleType = {
 
 //styled
 export const Wrapper = styled.div`
-  height: 90%;
+  flex: 1;
 `;
 
 export const Title = styled(Typography)<TitleType>`
@@ -25,7 +25,7 @@ export const Code = styled.span`
 `;
 
 export const TerminalContainer = styled.div`
-  height: 100%;
+  height: 90%;
   width: 100%;
   overflowY: auto;
 `;
